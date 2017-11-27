@@ -182,8 +182,6 @@ class UserSignFormView(View):
 
 
     def post(self, request):
-        login(request, User.objects.get(username=909555))
-        return redirect('fill_tree_table')
         form = self.form_class(request.POST)
         username = request.POST.get('username')
         password = request.POST.get('password')
