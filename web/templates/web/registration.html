@@ -256,76 +256,73 @@
 </div>
 
 
-<script type="text/javascript">
-    $(document).ready(function() {
-        $('#id_agree_container').append(
-            '<span><a href="#" id="rule1">Правилами компании</a> и условиями <a href="#" id="rule2">Представителького соглашения</a><span>'
-        ) {#
-            $("label[for='id_agree']").html(function(_, html) {#} {#
-                html.split('Правилами компании').join('<a id="rule1">Правилами компании</a>');#
-            } {#
-                return html;#
-            } {#});#
-        }
-        $("#dialog1").dialog({
-            autoOpen: false,
-            position: {
-                my: "top",
-                at: "top",
-                of: "body"
-            },
-            modal: true,
-            width: 700,
-            buttons: {
-                Ok: function() {
-                    $(this).dialog("close");
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('#id_agree_container').append(
+                '<span><a href="#" id="rule1">Правилами компании</a> и условиями <a href="#" id="rule2">Представителького соглашения</a><span>'
+            )
+{#            $("label[for='id_agree']").html(function(_, html) {#}
+{#                html.split('Правилами компании').join('<a id="rule1">Правилами компании</a>');#}
+{#                return html;#}
+{#            });#}
+            $( "#dialog1" ).dialog({
+                autoOpen : false,
+                    position: {
+                    my: "top",
+                      at: "top",
+                      of: "body"
+                    },
+                  modal: true,
+                    width: 700,
+                  buttons: {
+                    Ok: function() {
+                      $( this ).dialog( "close" );
+                    }
+                  }
+                })
+            $('#rule1').click(function () {
+                $( "#dialog1" ).dialog("open");
+                return false;
+            });
+            $( "#dialog2" ).dialog({
+                autoOpen : false,
+                    position: {
+                    my: "top",
+                      at: "top",
+                      of: "body"
+                    },
+                  modal: true,
+                    width: 700,
+                  buttons: {
+                    Ok: function() {
+                      $( this ).dialog( "close" );
+                    }
+                  }
+                })
+            $('#rule2').click(function () {
+                $( "#dialog2" ).dialog("open");
+                return false;
+            });
+         $('select').material_select();
+{#            document.getElementsByClassName('select-dropdown').onclick(function () {#}
+{#                console.log('[Hi]');#}
+{#            });#}
+            function changeTextIfPhone() {
+                if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || $(window).width() < 712) {
+                    // some code..
+                    $('#form-reg').css("width", '100%');
+                    $('#reg-header').css("font-size", '1rem');
+                } else {
+                    $('#form-reg').css("width", '40%');
+                    $('#reg-header').css("font-size", '2.5rem');
                 }
+
+
             }
-        })
-        $('#rule1').click(function() {
-            $("#dialog1").dialog("open");
-            return false;
+
+            changeTextIfPhone()
+
         });
-        $("#dialog2").dialog({
-            autoOpen: false,
-            position: {
-                my: "top",
-                at: "top",
-                of: "body"
-            },
-            modal: true,
-            width: 700,
-            buttons: {
-                Ok: function() {
-                    $(this).dialog("close");
-                }
-            }
-        })
-        $('#rule2').click(function() {
-            $("#dialog2").dialog("open");
-            return false;
-        });
-        $('select').material_select(); {#
-            document.getElementsByClassName('select-dropdown').onclick(function() {#} {#
-                console.log('[Hi]');#
-            } {#});#
-        }
-
-        function changeTextIfPhone() {
-            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || $(window).width() < 712) {
-                // some code..
-                $('#form-reg').css("width", '100%');
-                $('#reg-header').css("font-size", '1rem');
-            } else {
-                $('#form-reg').css("width", '40%');
-                $('#reg-header').css("font-size", '2.5rem');
-            }
-
-
-        }
-
-        changeTextIfPhone()
-
-    });
-</script>
+    </script>
 {% endblock %}
