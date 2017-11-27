@@ -74,7 +74,7 @@ class UserFormView(View):
         sponsor_id = request.GET.get('sponsor_id', None)
         if not sponsor_id:
             print('[NO CURATOR]')
-            return redirect('http://vtest.isetevik.com/start')
+            return redirect('http://video.isetevik.com/start')
             # return render(request, 'web/start.html')
         print('[SPO]', sponsor_id)
 
@@ -146,6 +146,8 @@ class ExistingUserFormView(UserFormView):
             password = form.cleaned_data['password']
             user.set_password(password)
             user.save()
+
+            Profile.objects.create(user=user.username)
 
             self.syncProfile(username=username)
 

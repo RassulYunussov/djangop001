@@ -77,10 +77,10 @@ class ExistingUserCreationForm(forms.ModelForm):
             return username
 
     def clean(self):
-        cleaned_data = super(UserCreationForm, self).clean()
+        cleaned_data = super(ExistingUserCreationForm, self).clean()
         password = cleaned_data.get("password")
         confirm_password = cleaned_data.get("confirm_password")
-
+        print(password, confirm_password)
         if password != confirm_password:
             raise forms.ValidationError(
                 "Пароли не совпадают"
@@ -195,8 +195,8 @@ class UserCreationForm(forms.ModelForm):
         cleaned_data = super(UserCreationForm, self).clean()
         password = cleaned_data.get("password")
         confirm_password = cleaned_data.get("confirm_password")
-
-        if password != confirm_password:
+        print('validation error password', password, confirm_password)
+        if password and password != confirm_password:
             raise forms.ValidationError(
                 "Пароли не совпадают"
             )

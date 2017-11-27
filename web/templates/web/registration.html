@@ -235,7 +235,7 @@
                     color: #F44336;
                     ">
                     {% for err in error_list %}
-                    <small class="error"><p style="margin: 10px">{{ err }}</p></small> {% endfor %}
+                    <small class=""><p style="margin: 10px">{{ err }}</p></small> {% endfor %}
                 </div>
                 {% csrf_token %} {% form %} {% endform %}
                 <div class="row" style="padding-bottom: 50px">

@@ -15,11 +15,6 @@
       .not('.material-ignore')
       .material_select()
 
-    var lang = jQuery( ":root" ).attr('lang')
-    if(lang) {
-      jQuery.datetimepicker.setLocale(lang.substr(0, 2));
-    }
-
     // Date/DateTime/Time
     // https://github.com/xdan/datetimepicker
     $container
@@ -73,6 +68,6 @@
     $(document).on('turbolinks:load', function() { initForms($(document)) })
     $(document).on('turbolinks:before-cache', function () { destroyForms($(document))})
   } else {
-    $(document).ready(function() { initForms($(document)) })
+    $(document).on('ready', function() { initForms($(document)) })
   }
 })()
