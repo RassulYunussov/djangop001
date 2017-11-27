@@ -1,0 +1,528 @@
+{% extends 'web/baseRoom.html' %}
+
+{% load static %}
+{% load material_form %}
+{% load staticfiles %}
+
+
+
+{% block page %}
+    <div class="row d-flex w-100 justify-content-center align-items-center" id="ref-head" style="padding-top: 4rem;">
+        <div class="col-12 d-flex w-100 justify-content-center">
+            {% if child %}
+                <h2>{{ id }}</h2>
+            {% else %}
+                <h2>Мои Профиль</h2>
+            {% endif %}
+
+        </div>
+        <div class="col-12 d-flex w-100 justify-content-center align-items-left">
+            <form method="POST" class="viewform" style="width: 40rem" onsubmit="return submitCity()">
+                {% csrf_token %}
+                {% form form=form %}
+
+                    {% part form.name prefix %}<i class="material-icons prefix">account_box</i>{% endpart %}
+                    {% part form.phone prefix %}<i class="material-icons prefix">call</i>{% endpart %}
+                    {% part form.email prefix %}<i class="material-icons prefix">email</i>{% endpart %}
+                    {% part form.telegram_name prefix %}<i class="material-icons prefix mdi mdi-telegram"></i>{% endpart %}
+                    {% part form.vk prefix %}<i class="material-icons prefix mdi mdi-vk">vk</i>{% endpart %}
+                    {% part form.facebook prefix %}<i class="material-icons prefix mdi mdi-facebook"></i>{% endpart %}
+                    {% part form.instagram prefix %}<i class="material-icons prefix mdi mdi-instagram"></i>{% endpart %}
+                    {% part form.twitter prefix %}<i class="material-icons prefix mdi mdi-twitter"></i>{% endpart %}
+                    {% part form.youtube prefix %}<i class="material-icons prefix mdi mdi-youtube-play"></i>{% endpart %}
+                    {% part form.classmate prefix %}<img class="material-icons prefix mdi" src="{% static 'media/odnoklassniki-512.png' %}">{% endpart %}
+
+                {% endform %}
+                <button id="my-submit" type="submit" name="_submit" class="save btn btn-default" style="background-color: #79b729; color: #FFF;">Сохранить</button>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+
+        $(document).on("ready", function () {
+            if (Cookies.get('edit_profile') == 1){
+                console.log("EDIT PROF");
+                Cookies.set('edit_profile', 0);
+                displaySnackBar("Данные были успешно сохранены");
+            }
+        });
+
+
+
+        $(window).keydown(function(event){
+            if(event.keyCode == 13) {
+                event.preventDefault();
+                return false;
+            }
+        });
+
+        function cityShowDrop() {
+            console.log("SHIT IS HERE");
+            console.log({{ id }});
+            $.post("{% url 'filter_cities' %}", {id: {{ id }} }, function( data ) {
+                console.log("SHIT IS HERE");
+                console.log(data);
+                document.getElementById("id_mycity").value = data['city'];
+            });
+
+{#            $('#id_mycity').on("click", function () {#}
+{#                $('.my-cities-list').show();#}
+{#            });#}
+            $('#id_mycity').on("click", function () {
+                $('.my-cities-list').show();
+            });
+
+
+            $($('.layout-row')[2]).find('.row').append('<div class="error-city col-12" style="display: none; color: #D32F2F; font-size: 0.6rem;">Города не существует, выберите город из списка </div>');
+            $('#ref-head').append('<div class="row d-flex justify-content-center"><div class="error-submit col-12" style="display: none; color: #D32F2F; font-size: 0.6rem;">Проверьте ошибки в форме</div></div>');
+{#            $(document).on('blur','#id_mycity',function(){#}
+{#                $('.my-cities-list').hide();#}
+{#            });#}
+
+        }
+
+        function citiesFilter(mycities) {
+            city = [];
+            $('#id_mycity').on("input", function () {
+               var field = document.getElementById('id_mycity');
+               var fieldCurrentVal = field.value;
+               $('.my-cities-list').empty();
+               $.each(mycities, function (index, item) {
+                   $('.my-cities-list').append('<li class="parent-element filter-btn d-flex" style="border-right:none">' + index + '</li');
+                   $.each(item, function (id, record) {
+                       if (record.toLowerCase().indexOf(fieldCurrentVal.toLowerCase()) !== -1) {
+
+                           console.log(fieldCurrentVal);
+                           $('#id_mycity_container ul').append('<li id="' + id + '" class="child-element filter-btn d-flex w-100">' + record + '</li');
+                           city.push(record);
+                           console.log(city);
+
+                       }
+                   });
+               });
+
+               citiesClick($('.child-element'));
+
+
+
+
+{#               $(".my-cities-list li").on("click", function () {#}
+{#                    console.log("fuck");#}
+{#               });#}
+
+{#               $.each($(".my-cities-list li"), function (index, data) {#}
+{#                    data.on("click", function () {#}
+{#                       console.log(data.text());#}
+{#                    });#}
+{#               });#}
+
+
+            });
+
+
+            $("#id_mycity").on('keyup', function (e) {
+                if (e.keyCode == 13) {
+                    if ($('.my-cities-list li').length == 3) {
+                        document.getElementById('id_mycity').value = city.pop();
+                        $('.my-cities-list').hide();
+                    }
+                }
+            });
+
+
+        }
+
+        function cities() {
+            $('#id_mycity_container').append('<ul class="my-cities-list"></ul>');
+            $.post("{% url 'filter_cities' %}", {country: ""}, function( data ) {
+                countries = data;
+                $.each(countries, function (index, item) {
+                     $('#id_mycity_container ul').append('<li class="parent-element filter-btn d-flex" style="border-right:none">' + index + '</li');
+                     $.each(item, function (id, record) {
+                         $('#id_mycity_container ul').append('<li id="' + id + '" class="child-element filter-btn d-flex w-100">' + record + '</li');
+                     });
+                });
+                citiesFilter(data);
+                citiesClick($('.child-element'));
+
+                $('#id_mycity').focusout(function(){ $('.my-cities-list').hide() });
+
+            });
+
+        }
+
+
+        function phonePlaceHolder() {
+            $('#id_phone').on("input", function(){
+                var fieldPhone = document.getElementById('id_phone');
+                var currentPhone = fieldPhone.value;
+
+                var regex = /\d/g;
+                if (!regex.test(currentPhone.slice(-1))) {
+                    fieldPhone.value = currentPhone.slice(0, currentPhone.length-1);
+                    if (currentPhone[0] != "+" || currentPhone.length == 0) {
+                    fieldPhone.value = "+";
+                    }
+                    if (currentPhone.length > 20) {
+                        fieldPhone.value = currentPhone.slice(0,20);
+                    }
+                }else {
+                    if (currentPhone[0] != "+" || currentPhone.length == 0) {
+                    fieldPhone.value = "+";
+                    }
+                    if (currentPhone.length > 20) {
+                        fieldPhone.value = currentPhone.slice(0,20);
+                    }
+                }
+
+            });
+        }
+        function SocialLinksPlaceHolder() {
+            var initialHolderVK = "https://vk.com/";
+            var initialHolderFB = "https://facebook.com/";
+            var initialHolderIN = "https://instagram.com/";
+            var initialHolderTW = "https://twitter.com/";
+            var initialHolderYO = "https://youtube.com/";
+            var initialHolderCL = "https://ok.ru/";
+            var initialHolderTN = "https://t.me/";
+            if (document.getElementById('id_vk').value.length < 15) {
+                document.getElementById('id_vk').value = initialHolderVK;
+            }
+            if (document.getElementById('id_facebook').value.length < 21) {
+                document.getElementById('id_facebook').value = initialHolderFB;
+            }
+            if (document.getElementById('id_instagram').value.length < 22) {
+                document.getElementById('id_instagram').value = initialHolderIN;
+            }
+            if (document.getElementById('id_twitter').value.length < 20) {
+                document.getElementById('id_twitter').value = initialHolderTW;
+            }
+            if (document.getElementById('id_youtube').value.length < 20) {
+                document.getElementById('id_youtube').value = initialHolderYO;
+            }
+            if (document.getElementById('id_classmate').value.length < 14) {
+                document.getElementById('id_classmate').value = initialHolderCL;
+            }
+            if (document.getElementById('id_telegram_name').value.length < 13) {
+                document.getElementById('id_telegram_name').value = initialHolderTN;
+            }
+
+
+
+
+
+
+
+            $('#id_vk').on("input", function(){
+                var fieldVK = document.getElementById('id_vk');
+                var currentAddressVK = fieldVK.value;
+                if (currentAddressVK.length < 15){  fieldVK.value = initialHolderVK;    }
+            });
+            $('#id_facebook').on("input", function () {
+                var fieldFB = document.getElementById('id_facebook');
+                var currentAddressFB = fieldFB.value;
+                if (currentAddressFB.length < 21){  fieldFB.value = initialHolderFB;    }
+            });$('#id_instagram').on("input", function () {
+                var fieldIN = document.getElementById('id_instagram');
+                var currentAddressIN = fieldIN.value;
+                if (currentAddressIN.length < 22){  fieldIN.value = initialHolderIN;    }
+            });$('#id_twitter').on("input", function () {
+                var fieldTW = document.getElementById('id_twitter');
+                var currentAddressTW = fieldTW.value;
+                if (currentAddressTW.length < 20){  fieldTW.value = initialHolderTW;    }
+            });$('#id_youtube').on("input", function () {
+                var fieldYO = document.getElementById('id_youtube');
+                var currentAddressYO = fieldYO.value;
+                if (currentAddressYO.length < 20){  fieldYO.value = initialHolderYO;    }
+            });$('#id_classmate').on("input", function () {
+                var fieldCL = document.getElementById('id_classmate');
+                var currentAddressCL = fieldCL.value;
+                if (currentAddressCL.length < 14){  fieldCL.value = initialHolderCL;    }
+            });$('#id_telegram_name').on("input", function () {
+                var fieldTN = document.getElementById('id_telegram_name');
+                var currentAddressTN = fieldTN.value;
+                if (currentAddressTN.length < 13){  fieldTN.value = initialHolderTN;    }
+            });
+        }
+
+        function citiesClick(elements) {
+            $.each(elements, function (index, data) {
+                $(this).on("click", function () {
+
+                    console.log(data.innerHTML);
+{#                    console.log($('#id_mycity').attr('value'));#}
+                    document.getElementById('id_mycity').value = data.innerHTML;
+                    $('.my-cities-list').hide()
+
+
+                });
+            });
+        }
+
+        function emailPlaceHolder() {
+            $('#id_email').attr("placeholder", "vilavi@gmail.ocm")
+        }
+
+
+        function submitCity() {
+            var val = document.getElementById('id_mycity').value;
+            var variants = [];
+            if ( val == "" ){
+                $('.error-city').show();
+                $('.error-submit').show();
+                return false;
+            }
+            $.post("{% url 'filter_cities' %}", {country: ""}, function( data ) {
+                countries = data;
+                $.each(countries, function (index, item) {
+                     $.each(item, function (id, record) {
+                         variants.push(record);
+                         console.log(record);
+                     });
+                });
+
+                console.log(variants);
+                console.log($.inArray(val, variants));
+                if ($.inArray(val, variants) == -1 ) {
+                    $('.error-city').show();
+                    $('.error-submit').show();
+                    return false;
+                }
+                else {
+                    Cookies.set('edit_profile', 1);
+                    return true;
+                }
+
+            });
+        }
+
+        function cityProcess() {
+            $.post("{% url 'filter_cities' %}", {id: {{ id }} }, function( data ) {
+                console.log("SHIT IS HERE");
+                console.log(data);
+                document.getElementById("id_mycity").value = data['city'];
+            });
+            $($('.layout-row')[2]).find('.row').append('<div class="error-city col-12" style="display: none; color: #D32F2F; font-size: 0.6rem;">Города не существует, выберите город из списка </div>');
+            $('#ref-head').append('<div class="row d-flex justify-content-center"><div class="error-submit col-12" style="display: none; color: #D32F2F; font-size: 0.6rem;">Проверьте ошибки в форме</div></div>');
+            $("#id_mycity").on("click", function () {chooseCountry()});
+            $("#id_mycity").attr('readonly', true);
+            $("#id_mycity").css({'cursor': 'pointer'});
+            $("#id_mycity").css({'color': 'black'});
+        }
+
+        function chooseCountry() {
+
+            $('.modal-header').empty();
+            $('.modal-header').append('<p>Выбор Страны</p><button id="tree-text-close" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>');
+            $('.modal-body').empty();
+            $('.modal-body').append('' +
+                    '<div class="md-form md-form-static">'+
+                            '<div class="row justify-content-center">'+
+                                '<div class="col-12">'+
+                                    '<button type="button" class="form-control-static btn btn-secondary w-100" data-toggle="collapse" data-target="#countries-list">'+
+                                        'Выберите Страну'+
+                                    '</button>'+
+                                '</div>'+
+                            '</div>'+
+                            '<div id="countries-list" class="collapse">'+
+                                '<ul class="my-countries-list" style="display: block;"></ul>'+
+                            '</div>'+
+                            '<hr>'+
+                    '</div>');
+
+
+            $.get("{% url 'countries' %}", function( data ){
+                countries = data['response'];
+                $.each(countries, function (id, record) {
+                    $('.my-countries-list').append('<li id="' + id + '" class="country-element filter-btn d-flex w-100">' + record + '</li>')
+                });
+                countryClick($('.country-element'));
+            });
+
+
+            $('#tree-text-info').slideDown();
+            $('#tree-text-close').on("click", function () {
+                $('#tree-text-info').slideUp();
+            });
+
+        }
+
+        function countryClick(country_list) {
+            $.each(country_list, function (index, data) {
+                $(this).on("click", function () {
+
+{#                    console.log(data.innerHTML);#}
+                    chooseCity(data.innerHTML);
+{#                    document.getElementById('id_mycity').value = data.innerHTML;#}
+{#                    $('.my-cities-list').hide()#}
+
+
+                });
+            });
+        }
+
+        var cityChoice = '';
+
+        function chooseCity(country) {
+            $('.modal-header').empty();
+            $('.modal-header').append('<i id="city-back" class="mdi mdi-arrow-left-bold-circle-outline mdi-24px" style="cursor: pointer"></i><p>Выбор Города</p><button id="tree-text-close" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>');
+            $('.modal-body').empty();
+            $('.modal-body').append('' +
+                    '<div class="md-form md-form-static">'+
+                        '<label>Город</label>'+
+                        '<p id="city-country" class="form-control-static">' + country + '</p>'+
+                        '<hr>'+
+                    '</div>'+
+                    '<div class="md-form md-form-static">'+
+                        '<div class="row">'+
+                            '<div class="input-field col s12" id="id_mycity_container">'+
+                                '<input id="id_chooseCity" name="mycity" type="text" autocomplete="off">'+
+                                '<label id="id_chooseCityLabel" for="id_chooseCity" class="">Город</label>'+
+
+                                '<ul class="my-cities-list" style="display: none;"></ul>'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>'+
+                    '<div class="md-form md-form-static">'+
+                        '<div class="row">'+
+                            '<div class="col-12 d-flex justify-content-center" style="cursor: pointer">'+
+                                '<i id="city-forward" class="mdi mdi-check-circle-outline mdi-36px"></i>'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>');
+
+
+            $.post("{% url 'cities' %}", { country: country }, function( data ){
+                countries = data['response'];
+                cities = [];
+                $.each(countries, function (id, record) {
+                    $('.my-cities-list').append('<li id="city-' + id + '" class="city-element filter-btn d-flex w-100">' + record + '</li>');
+                    cities.push(record);
+                });
+
+                cityClick($('.city-element'));
+
+
+
+            });
+
+            inputCityFilter(cities);
+
+            $('#tree-text-info').slideDown();
+            $('#tree-text-close').on("click", function () {
+                $('#tree-text-info').slideUp();
+            });
+
+            $('#id_chooseCity').on("click", function () {
+                $('.my-cities-list').show();
+            });
+            $('#city-back').on("click", function () {
+                chooseCountry();
+            });
+
+        }
+
+        function inputCityFilter(citiesList) {
+            city = [];
+            $('#id_chooseCity').on("input", function () {
+               var field = document.getElementById('id_chooseCity');
+               var fieldCurrentVal = field.value;
+               $('.my-cities-list').empty();
+
+               $.each(citiesList, function (id, record) {
+                   if (record.toLowerCase().indexOf(fieldCurrentVal.toLowerCase()) !== -1) {
+
+                       console.log(fieldCurrentVal);
+                       $('.my-cities-list').append('<li id="' + id + '" class="city-element filter-btn d-flex w-100">' + record + '</li>');
+                       city.push(record);
+
+                   }
+               });
+                $('.my-cities-list').show();
+               cityClick($('.city-element'));
+
+            });
+
+
+            $("#id_chooseCity").on('keyup', function (e) {
+                if (e.keyCode == 13) {
+                    if ($('.my-cities-list li').length == 1) {
+                        val = city.pop();
+                        document.getElementById('id_chooseCity').value = val;
+                        cityChoice = val;
+                        $('.my-cities-list').hide();
+                    }
+                }
+            });
+        }
+
+        function cityClick(city_list) {
+            $.each(city_list, function (index, data) {
+                console.log($(this));
+                $(this).on("click", function () {
+
+                    document.getElementById('id_chooseCity').value = data.innerHTML;
+                    cityChoice = data.innerHTML;
+                    $('.my-cities-list').hide();
+                    $('#id_chooseCityLabel').toggleClass('acitve');
+
+
+                });
+            });
+{#            $('#id_chooseCity').focusout(function(){ $('.my-cities-list').hide() });#}
+
+            $('#city-forward').on("click", function () {
+                document.getElementById('id_mycity').value = cityChoice;
+                $('#tree-text-info').slideUp();
+            });
+        }
+
+
+{#        $('#nav-but').click(function () {#}
+{#            submitCity();#}
+{#        });#}
+
+{#        cityShowDrop();#}
+{#        cities();#}
+
+
+
+
+        cityProcess();
+        phonePlaceHolder();
+        SocialLinksPlaceHolder();
+        emailPlaceHolder();
+
+        $(document).ready(function(){
+            $('label:contains("Город")').attr("class", "active");
+            console.log("we are here");
+        });
+
+{#        $( document ).ready(function() {#}
+{#            console.log( "ready!" );#}
+{#            $('#id_mycity_container label').addClass("active");#}
+{#        });#}
+
+    </script>
+    <style>
+        .my-cities-list {
+            display: none;
+            box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+        }
+        .parent-element {
+            cursor: default;
+            background-color: #fff;
+            width: 90%;
+            margin-bottom: 0.5rem;
+            margin-top: 0.5rem;
+            padding-left: 0.5rem;
+        }
+
+        .child-element {
+
+            padding-left: 1rem;
+        }
+    </style>
+{% endblock %}

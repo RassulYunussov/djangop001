@@ -1,0 +1,39 @@
+{% extends 'web/baseRoom.html' %}
+
+{% load staticfiles %}
+{% load material_form %}
+
+
+{% block page %}
+
+    <div class="row d-flex w-100 justify-content-center align-items-center" id="ref-head" style="padding-top: 4rem;">
+        <div class="col-12 d-flex w-100 justify-content-center">
+
+            <h2>Настройки системы</h2>
+
+        </div>
+
+        <div class="col-10 d-flex w-100 alert alert-info justify-content-center" style="margin-bottom: 0">Дата последнего обновления ракеты: {{ date }}</div>
+        {% if problems %}
+            <div class="col-10 d-flex w-100 alert alert-danger justify-content-center" style="color: rgb(211, 47, 47); font-size: 0.6rem;">
+                Данные не обновляются, проверьте логин и пароль учетной записи.
+            </div>
+        {% endif %}
+
+        <div class="col-10" style="margin-bottom: 1rem"></div>
+
+
+        <div class="col-12 d-flex w-100 justify-content-center align-items-left">
+            <form method="POST" class="viewform" style="width: 40rem" onsubmit="">
+
+                {% csrf_token %}
+                {% form %}
+                {% endform %}
+
+                <button id="my-submit" type="submit" name="_submit" class="save btn btn-default" style="background-color: #79b729; color: #FFF;">Сохранить</button>
+            </form>
+        </div>
+    </div>
+
+
+{% endblock %}

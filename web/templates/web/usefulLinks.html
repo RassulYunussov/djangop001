@@ -1,0 +1,177 @@
+{% extends 'web/baseRoom.html' %}
+
+{% load material_form %}
+{% load staticfiles %}
+
+{% block page %}
+
+    <style>
+        .my_btn {
+            border: 1px solid transparent;
+            height: 35px;
+            border-radius: .25rem;
+            box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+        }
+        .my_btn:active {
+            color: #fff;
+            background-color: #ccc;
+            border-color: #ccc;
+        }
+        .my_btn:hover {
+            color: #fff;
+            background-color: #ccc;
+            border-color: #ccc;
+        }
+        button:focus {
+            background-color: #ddd;!important;
+            outline: none;
+        }
+        .my_br {
+            display: none;
+        }
+    </style>
+
+
+    <div class="row d-flex w-100 justify-content-center align-items-center" id="ref-head" style="padding-top: 4rem;">
+        <div class="col-3">
+{#            <button type="button" class="btn btn-secondary" data-toggle="collapse" data-target="#demo">Фильтры</button>#}
+        </div>
+        <div class="col-6 d-flex w-100 justify-content-center">
+        <h2>Полезные Ссылки</h2>
+        </div>
+        <div class="col-3 d-flex justify-content-end">
+            {% if isAdmin %}
+                <a href="{% url 'useful_link_create' %}">
+                    <i class="mdi mdi-plus mdi-24px"></i>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row d-flex justify-content-center">
+        <div class="col-12 d-flex justify-content-center">
+            <table class="table">
+                <thead>
+                    <tr>
+                        {% if isAdmin %}
+                            <th>Название</th>
+                            <th>URL</th>
+                            <th></th>
+                            <th></th>
+                        {% else  %}
+                            <th><div class="row d-flex justify-content-center" style="margin: 0">Название</div></th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for link in links %}
+                        <tr>
+                            {% if isAdmin %}
+                                <td> {{ link.name }} </td>
+                                <td><a href="{{ link.url }}" target="_blank"> {{ link.url }} </a></td>
+                                <td>
+                                    <a href="{% url 'useful_link_edit' pk=link.pk %}" style="color: black">
+                                        <i class="mdi mdi-pencil mdi-24px"></i>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{% url 'useful_link_delete' pk=link.pk %}" onclick="delete_link({{ pk }})" style="color: black">
+                                        <i class="mdi mdi-delete mdi-24px"></i>
+                                    </a>
+                                </td>
+                            {% else %}
+                                <td>
+                                    <a href="{{ link.url }}" style="color: #000;" target="_blank">
+                                        <button class="useful-links btn btn-secondary d-flex w-100 justify-content-center">
+                                            {{ link.name }}
+                                        </button>
+                                    </a>
+                                </td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+
+    <script type="text/javascript">
+
+        $(document).on("ready", function () {
+            var cook = Cookies.get('useful_links');
+
+            if (cook == 1){
+
+                displaySnackBar("Ссылка создана");
+            } else if (cook == 2) {
+
+                displaySnackBar("Ссылка изменена");
+            } else if (cook ==3) {
+                displaySnackBar("Ссылка удалена");
+            }
+            Cookies.set('useful_links', 0)
+        });
+
+        function delete_link(pk){
+            Cookies.set('useful_links', 3);
+        }
+
+        function copyToClipboard(text, el) {
+            var copyTest = document.queryCommandSupported('copy');
+            var elOriginalText = el.attr('data-original-title');
+
+            if (copyTest === true) {
+                var copyTextArea = document.createElement("textarea");
+                copyTextArea.value = text;
+                document.body.appendChild(copyTextArea);
+                copyTextArea.select();
+                try {
+                    var successful = document.execCommand('copy');
+                    var msg = successful ? 'Скопировано!' : 'Не скопировалось';
+                    el.attr('data-original-title', msg).tooltip('fadeIn');
+                } catch (err) {
+                    console.log('Невозможно скопировать');
+                }
+                document.body.removeChild(copyTextArea);
+                el.attr('data-original-title', elOriginalText);
+                } else {
+                    // Fallback if browser doesn't support .execCommand('copy')
+                    window.prompt("Скопируйте командами: Ctrl+C or Command+C, Enter", text);
+                }
+        }
+
+        function changeTextIfPhone() {
+            if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || $(window).width() < 712) {
+                // some code..
+                $('.my_br').css("display", "block");
+                $('.col-2').css("padding-left", "0");
+            }
+            if ($(window).width() < 770) {
+                $('.useful-links').css({"font-size": "0.9em"});
+            }
+        }
+
+        $(document).ready(function(){
+            // Initialize
+            // ---------------------------------------------------------------------
+
+            // Tooltips
+            // Requires Bootstrap 3 for functionality
+            $('.js-tooltip').tooltip();
+
+            // Copy to clipboard
+            // Grab any text in the attribute 'data-copy' and pass it to the
+            // copy function
+                $('.js-copy').click(function() {
+                    var text = $(this).attr('data-copy');
+                    var el = $(this);
+                    copyToClipboard(text, el);
+                });
+            changeTextIfPhone();
+        });
+
+
+    </script>
+{% endblock %}

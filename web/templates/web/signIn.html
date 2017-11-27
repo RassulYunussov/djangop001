@@ -1,0 +1,69 @@
+{% extends 'web/base.html' %}
+
+{% load material_form %}
+{% load staticfiles %}
+
+{% block content %}
+
+    <div class="container-fluid d-flex flex-column h-100 w-100 align-items-center justify-content-center">
+
+        <div class="row d-flex w-60 justify-content-center align-items-center">
+            <div class="d-flex w-100 justify-content-center align-items-center">
+                <h1 id="sign-header">ВХОД</h1>
+            </div>
+        </div>
+
+        <div class="row d-flex justify-content-center align-items-center" id="form-sign" style="width: 40%;">
+            <div class="d-flex w-100 justify-content-center align-items-center">
+                <form method="POST" class="viewform" style="width: 100%">
+                    {% csrf_token %}
+                    {% form %}
+                    {% endform %}
+                    <div class="row d-flex justify-content-center">
+                        <div class="button-row col-12 d-flex justify-content-center">
+                            <button type="submit" name="_submit" class="btn btn-outline-secondary sign-btn" style="background-color: #79b729; color: #FFF; width: 100%;">
+                                Войти
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-top: 1rem;">
+                        <div class="col-6 d-flex justify-content-start" id="login-link-right" style="">
+                            <a href="{% url 'registration_existing' %}">
+                                Регистрация
+                            </a>
+                        </div>
+                        <div class="col-6 d-flex justify-content-end" id="login-link-left" style="">
+                            <a href="{% url 'forget_password' %}">
+                                Забыли Пароль?
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            function changeTextIfPhone() {
+                if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+                    // some code..
+                    $('#form-sign').css("width", '100%');
+                    $('#sign-header').css("font-size", '1rem');
+
+                } else {
+                    $('#form-sign').css("width", '40%');
+                    $('#sign-header').css("font-size", '2.5rem');
+                }
+
+
+            }
+
+            changeTextIfPhone()
+
+        });
+    </script>
+
+
+{% endblock %}

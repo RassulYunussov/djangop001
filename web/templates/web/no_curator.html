@@ -1,0 +1,110 @@
+{% extends 'web/base.html' %}
+{% load staticfiles %}
+{% block content %}
+
+{#<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>#}
+<div class="row justify-content-center align-items-center" id="choice-text">
+            <div class="col-10 d-flex justify-content-center">
+                <img id="red-button" class="img-responsive d-flex" style="width: 10rem; height: 10rem; cursor: pointer; border-radius: 1.5rem;" src="{% static 'media/redbutton.png' %}">
+{#                <button type="button" class="btn btn-outline-secondary video-btn" style="padding-bottom: 0; padding-top: 0; background-color: #79b729; color: #FFF; font-size: 2em">#}
+{#                    <b>Старт</b>#}
+{#                </button>#}
+            </div>
+        </div>
+<script>
+    $(document).ready(function(){
+        $('#red-button').click(function () {
+            postGetSponsor()
+        })
+    });
+    function idOfThePageHolder(forServer) {
+        myurl = location.href;
+        id = '';
+
+        if (forServer) {
+{#                            if (myurl.length >= 49) {#}
+{#                                id = myurl.slice(36, 42);#}
+{#                            } else {#}
+{#                                id = '909555';#}
+{#                            }#}
+            if (myurl.length >= 39) {
+                id = myurl.slice(26, 32);
+            } else {
+                id = '909555';
+            }
+        } else {
+            if (myurl.length >= 35) {
+                id = myurl.slice(22, 28);
+            } else {
+                id = '909555';
+            }
+        }
+
+        return id;
+    }
+    function postGetSponsor() {
+        $.post("{% url 'vilavi_sponsor_id' %}", { id: idOfThePageHolder(true) }, function( data ) {
+
+            if (data == "") {
+
+                $.post("{% url 'time_remaining' %}", { id: idOfThePageHolder(true) }, function(data) {
+
+
+                    $('.timer').removeClass('is-complete');
+                    $('.timer').attr("data-seconds-left", data['result']);
+                    $('.timer').text("Время ожидания:\xa0");
+                    show = false;
+
+
+                    $('#no-id-text').fadeIn();
+                    $('#timer').fadeIn();
+                    $('.loader').fadeOut();
+                    $('.timer').removeClass('is-complete');
+                    if ($('.timer').text().length < 32) {
+                        $('.timer').startTimer({
+                            onComplete: function(element){
+                                element.addClass('is-complete');
+                            }
+                        });
+                        setTimeout(function () {
+                            $('#choice-text').fadeIn();
+                            $('#no-id-text').fadeOut();
+                            $('#timer').fadeOut();
+                            $('.timer').text("Время ожидания:\xa0");
+                            $('.timer').replaceWith(
+                                '<div class="timer col-6 d-flex justify-content-center"' +
+                                ' style="font-size: 1rem" data-seconds-left="600"' +
+                                '>До завершения регистрации осталось: &nbsp;</div>'
+                            );
+
+                        }, data['result'] * 1000);
+                    }
+
+                });
+
+            } else {
+
+                // Переход на регистрацию
+                window.location.replace('http://otest.isetevik.com/registration?sponsor_id=' + data);
+                secondsLeft = timer_values['registration_time']*60;
+                $('.timer').text("На завершение регистрации осталось:\xa0");
+                $('.timer').attr("data-seconds-left", secondsLeft.toString());
+
+                $('#id-regm').text("ID спонсора для регистрции: " + data);
+                $('#id-regm-rec').attr("data-copy", data);
+                changeTextIfPhone(data);
+
+                $('#text-reg-vil').fadeIn();
+                $('#text-5').fadeIn();
+                $('.loader').fadeOut();
+{#                                $('#reg-button').click(function () {#}
+{#                                    console.log('[ID]', spId);#}
+{#                                    window.location.replace('http://otest.isetevik.com/registration/' + spId);#}
+{#                                });#}
+            }
+
+
+        });
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,305 @@
+/*Start dropdown*/
+/* Dropdown Button */
+.dropbtn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+/* Dropdown button on hover & focus */
+.dropbtn:hover, .dropbtn:focus {
+    background-color: #3e8e41;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {background-color: #f1f1f1}
+
+/* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
+.show {display:block;}
+/*End dropdown*/
+a h1 {
+    color: #292929;
+}
+
+
+.box-wrap {
+    height: 100vh;
+    width: 100vw;
+
+}
+
+.navbare {
+    position: fixed;!important; /* Set the navbar to fixed position */
+    top: 0; /* Position the navbar at the top of the page */
+    left: 0;
+    right: 0;
+    /*overflow: hidden;*/
+    background-color: #eceeef;
+    color: #292b2c;
+    width: 100%; /* Full width */
+    height: 4rem;
+    padding-top: 0rem;
+    z-index: 100;
+}
+
+/*background-image: url({% static 'media/footer_back_2.png' %});background-color: #FFFFFF;*/
+
+.bottombare {
+    /*overflow: hidden;*/
+    color: #292b2c;
+    width: 100%; /* Full width */
+    height: 3rem;
+    z-index: 100;
+    margin-top: 5rem;
+    position: fixed;!important;
+    bottom: 0;!important;
+    right:0;!important;
+    left:0;!important;
+}
+
+
+.footer-icon {
+    border-radius: 1rem 1rem 1rem 1rem;
+}
+
+.footer-icon:hover {
+    box-shadow: 0 0 1rem #888888;
+    border-radius: 1rem 1rem 1rem 1rem;
+}
+
+.box-wrap-header {
+    padding-top: 5rem;
+    margin-right: 0;!important;
+    padding-right: 0;!important;
+}
+
+.video-conts {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    text-align: center;
+}
+
+.iSetevik-links {
+    box-shadow: 0 0 20px #888888;
+}
+
+.icon {
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    margin: 0;
+    vertical-align: middle;
+}
+
+.decrease-letters {
+    font-size: 2rem;!important;
+}
+
+
+.btn:focus {
+    background-color: #ccc;
+}
+
+.my_btn {
+    margin-top: 0rem;
+    margin-bottom: 0rem;
+    margin-left: 1rem;
+}
+
+.iSetVil-btn {
+    display: inline-block;
+    font-weight: 400;
+    line-height: 1.25;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    user-select: none;
+    /*border: 1px solid transparent;*/
+    padding: .5rem 1rem;
+    font-size: 1rem;
+    /*border-radius: .25rem;*/
+    transition: all .2s ease-in-out;
+    font-family: -apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    /*box-shadow: 0 0 10px #888888;*/
+}
+
+.iSetVil-btn-bold {
+
+    border: 1px solid #000;
+    color: #000!important;
+
+}
+
+.iSetVil-btn-bold:hover {
+
+    background: #fff !important;
+    color: #000 !important;
+    cursor: default !important;
+
+}
+
+
+
+div[class^="header"] {
+    position: fixed;
+    z-index: 10;
+}
+
+button[class^="btn btn-outline-secondary"] {
+    color: #222c31;
+}
+button[class^="btn btn-outline-secondary"]:active {
+    background-color: rgba(0,0,0,0.1);
+}
+
+.text-center {
+    padding: 1rem;
+    border-radius: 1.5rem;
+}
+
+a[class^="text-center"]:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+}
+
+
+
+@media screen and (min-width: 768px) {
+    div[class^="main-icons"] {
+
+    }
+}
+
+@media (max-width: 320px) and (orientation: portrait) {
+    .button-row {
+        /*width: 30%;*/
+    }
+
+}
+
+@media (min-width: 300px) and (max-width: 320px) and (orientation: landscape) {
+    div[class^="main-icons"] {
+        width: 50%;!important;
+    }
+
+}
+
+@media screen and (max-width: 570px) and (orientation: landscape) {
+    div[class^="main-icons"] {
+        width: 50%;!important;
+    }
+
+}
+
+
+@media screen and (max-width: 480px) and (orientation: landscape) {
+    div[class^="main-icons"] {
+        width: 50%;
+    }
+    h1[class^="sign-header"] {
+        visibility: hidden;
+    }
+
+}
+@media screen and (max-width: 480px) and (orientation: portrait) {
+
+}
+
+@media screen and (min-width: 480px) {
+    div[class^="button-row"] {
+        margin-right: 1rem;
+    }
+}
+
+
+
+@media (max-width: 576px) {
+    div[class^="col-xs-12 col-sm-3 col-lg-3"] {
+        height: 20%;
+    }
+
+    iframe {
+        width: 100%;
+    }
+
+    div[class^="video-conts"] {
+        font-size: 60%;
+    }
+    button[class^="btn btn-outline-secondary"] {
+        margin-left: 1rem;
+        margin-right: 1rem;
+    }
+    div[class^="sign"] {
+        visibility: hidden;
+    }
+}
+
+@media (max-width: 768px) {
+    /* For mobile phones: */
+    div[class^="col-lg-3"] {
+        width: 1.5rem;
+    }
+    div[class^="row"] {
+        font-size: 0.9em;
+    }
+    div[id^="iSetevik-logo"] h1 {
+        font-size: 2rem;!important;
+    }
+
+    div[id^="personal-room"] h2 {
+        font-size: 1rem;!important;
+    }
+    div[id^="ref_title"] h2 {
+        font-size: 0.9rem;
+    }
+    div[class^="ref-pics"] {
+        height: 2rem;
+    }
+    div[class^="ref-pics"] img {
+        height: 30px;
+        width: 30px;
+    }
+
+    div[class^="video-text"] {
+        width: 80%;
+    }
+
+    div[class^="video-conts"] {
+        font-size: 80%;
+    }
+    div[class^="spacer"] {
+        display: none;
+    }
+    a[class^="text-center"] h1 {
+        font-size: 0.9rem;
+    }
+}
+
+

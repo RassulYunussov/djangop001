@@ -1,0 +1,288 @@
+{% extends 'web/baseRoom.html' %} {% load material_form %} {% load staticfiles %} {% block page %}
+
+<style>
+    .my_btn {
+        border: 1px solid transparent;
+        height: 35px;
+        border-radius: .25rem;
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+    }
+    
+    .my_btn:active {
+        color: #fff;
+        background-color: #ccc;
+        border-color: #ccc;
+    }
+    
+    .my_btn:hover {
+        color: #fff;
+        background-color: #ccc;
+        border-color: #ccc;
+    }
+    
+    button:focus {
+        background-color: #ddd;
+        !important;
+        outline: none;
+    }
+    
+    .my_br {
+        display: none;
+    }
+</style>
+
+
+<div class="container-fluid d-flex w-100 h-100 align-items-center flex-column">
+
+    <div class="row d-flex w-100 justify-content-center align-items-center" id="ref-head" style="padding-top: 4rem">
+        <div class="col-12 d-flex w-100 justify-content-center align-items-center" id="ref_title">
+            <h2>Реферальные Ссылки</h2>
+        </div>
+    </div>
+
+
+
+    {#
+    <div class="row d-flex w-100 justify-content-center align-items-center text-content" id="text-5" style="margin-bottom: 1rem; margin-top: 1rem">#} {#
+        <div class="col-12 d-flex justify-content-center">#} {##} {#
+            <div class="iSetVil-btn-bold btn btn-outline-secondary d-flex w-100 justify-content-center" id="id-regm">#} {#
+                <p style="text-transform: none">#} {# <b>#}
+{#                                http://iSETEVIK.com/{{ id }}#}
+{#                            </b>#} {# </p>#} {# </div>#} {# <button type="button" class="my_btn js-tooltip js-copy btn btn-outline-secondary" id="id-regm-rec" style="margin-left: 0rem" data-toggle="tooltip" data-placement="bottom" data-copy="http://isetevik.com/{{ id }}/"
+                title="Скопировать">#}
+{#                    <button type="button" class="my_btn js-tooltip js-copy btn btn-outline-secondary" id="id-regm-rec" style="margin-left: 0rem" data-toggle="tooltip" data-placement="bottom" data-copy="http://isetevik.com/{{ id }}/" title="Скопировать">#}
+{#                    <!-- icon from google's material design library -->#}
+{#                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="24" height="24" viewBox="0 0 24 24"><path d="M17,9H7V7H17M17,13H7V11H17M14,17H7V15H14M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3Z" /></svg>#}
+{#                    </button>#} {##} {# </div>#} {# </div>#} {#
+    <div class="row d-flex w-100 justify-content-center align-items-center text-content" id="text-5" style="margin-bottom: 1rem; margin-top: 1rem">#} {#
+        <div class="col-12 d-flex justify-content-center">#} {##} {#
+            <div class="iSetVil-btn-bold btn btn-outline-secondary d-flex w-100 justify-content-center" id="id-regm">#} {#
+                <p style="text-transform: none">#} {# <b>#}
+        {#                            http://t.me/{{ id }}#}
+{#                                http://t.me/Tayga8_bizbot#}
+{#                            </b>#} {# </p>#} {# </div>#} {# <button type="button" class="my_btn js-tooltip js-copy btn btn-outline-secondary" id="id-regm-rec" style="margin-left: 0rem" data-toggle="tooltip" data-placement="bottom" data-copy="http://t.me/{{ id }}"
+                title="Скопировать">#}
+{#                    <!-- icon from google's material design library -->#}
+{#                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="24" height="24" viewBox="0 0 24 24"><path d="M17,9H7V7H17M17,13H7V11H17M14,17H7V15H14M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3Z" /></svg>#}
+{#                    </button>#} {##} {# </div>#} {# </div>#} {#
+    <div class="row d-flex w-100 justify-content-center align-items-center text-content" id="text-5" style="margin-bottom: 1rem; margin-top: 1rem">#} {#
+        <div class="col-12 d-flex justify-content-center">#} {##} {#
+            <div class="iSetVil-btn-bold btn btn-outline-secondary d-flex w-100 justify-content-center" id="id-regm">#} {#
+                <p style="text-transform: none">#} {# <b>#}
+{#                                http://video.iSETEVIK.com/{{ id }}/video/#}
+{#                            </b>#} {# </p>#} {# </div>#} {# <button type="button" class="my_btn js-tooltip js-copy btn btn-outline-secondary" id="id-regm-rec" style="margin-left: 0rem" data-toggle="tooltip" data-placement="bottom" data-copy="http://isetevik.com/{{ id }}/video/"
+                title="Скопировать">#}
+{#                    <button type="button" class="my_btn js-tooltip js-copy btn btn-outline-secondary" id="id-regm-rec" style="margin-left: 0rem" data-toggle="tooltip" data-placement="bottom" data-copy="http://video.isetevik.com/{{ id }}/video/" title="Скопировать">#}
+{#                    <!-- icon from google's material design library -->#}
+{#                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="24" height="24" viewBox="0 0 24 24"><path d="M17,9H7V7H17M17,13H7V11H17M14,17H7V15H14M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3Z" /></svg>#}
+{#                    </button>#} {##} {# </div>#} {# </div>#}
+
+    <div class="row d-flex w-100 justify-content-center align-items-center text-content" id="text-5" style="margin-bottom: 1rem; margin-top: 1rem">
+        <div class="col-12 d-flex justify-content-center">
+
+            <div class="iSetVil-btn-bold btn btn-outline-secondary d-flex w-100 justify-content-center" id="id-regm" style="user-select: text">
+                <p style="text-transform: none">
+                    <b>
+                        http://video.iSETEVIK.com/{{ id }}/start/
+                    </b>
+                </p>
+            </div>
+            {# <button type="button" class="my_btn js-tooltip js-copy btn btn-outline-secondary" id="id-regm-rec" style="margin-left: 0rem" data-toggle="tooltip" data-placement="bottom" data-copy="http://isetevik.com/{{ id }}/video/1" title="Скопировать">#}
+            <button type="button" class="my_btn js-tooltip js-copy btn btn-outline-secondary" id="id-regm-rec" style="margin-left: 0rem" data-toggle="tooltip" data-placement="bottom" data-copy="http://video.isetevik.com/{{ id }}/start/" title="Скопировать">
+            <!-- icon from google's material design library -->
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="24" height="24" viewBox="0 0 24 24"><path d="M17,9H7V7H17M17,13H7V11H17M14,17H7V15H14M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3Z" /></svg>
+            </button>
+
+        </div>
+    </div>
+    <div class="row d-flex w-100 justify-content-center align-items-center text-content" id="text-5" style="margin-bottom: 1rem; margin-top: 1rem">
+        <div class="col-12 d-flex justify-content-center">
+
+            <div class="iSetVil-btn-bold btn btn-outline-secondary d-flex w-100 justify-content-center" id="id-regm" style="user-select: text">
+                <p style="text-transform: none">
+                    <b>
+                                http://video.iSETEVIK.com/{{ id }}/video/1/
+                            </b>
+                </p>
+            </div>
+            {# <button type="button" class="my_btn js-tooltip js-copy btn btn-outline-secondary" id="id-regm-rec" style="margin-left: 0rem" data-toggle="tooltip" data-placement="bottom" data-copy="http://isetevik.com/{{ id }}/video/1" title="Скопировать">#}
+                    <button type="button" class="my_btn js-tooltip js-copy btn btn-outline-secondary" id="id-regm-rec" style="margin-left: 0rem" data-toggle="tooltip" data-placement="bottom" data-copy="http://video.isetevik.com/{{ id }}/video/1/" title="Скопировать">
+                    <!-- icon from google's material design library -->
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="24" height="24" viewBox="0 0 24 24"><path d="M17,9H7V7H17M17,13H7V11H17M14,17H7V15H14M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3Z" /></svg>
+                    </button>
+
+        </div>
+    </div>
+    <div class="row d-flex w-100 justify-content-center align-items-center text-content" id="text-5" style="margin-bottom: 1rem; margin-top: 1rem">
+        <div class="col-12 d-flex justify-content-center">
+
+            <div class="iSetVil-btn-bold btn btn-outline-secondary d-flex w-100 justify-content-center" id="id-regm" style="user-select: text">
+                <p style="text-transform: none">
+                    <b>
+                                http://video.iSETEVIK.com/{{ id }}/video/2/
+                            </b>
+                </p>
+            </div>
+            {# <button type="button" class="my_btn js-tooltip js-copy btn btn-outline-secondary" id="id-regm-rec" style="margin-left: 0rem" data-toggle="tooltip" data-placement="bottom" data-copy="http://isetevik.com/{{ id }}/video/2" title="Скопировать">#}
+                    <button type="button" class="my_btn js-tooltip js-copy btn btn-outline-secondary" id="id-regm-rec" style="margin-left: 0rem" data-toggle="tooltip" data-placement="bottom" data-copy="http://video.isetevik.com/{{ id }}/video/2/" title="Скопировать">
+                    <!-- icon from google's material design library -->
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="24" height="24" viewBox="0 0 24 24"><path d="M17,9H7V7H17M17,13H7V11H17M14,17H7V15H14M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3Z" /></svg>
+                    </button>
+
+        </div>
+    </div>
+    <div class="row d-flex w-100 justify-content-center align-items-center text-content" id="text-5" style="margin-bottom: 1rem; margin-top: 1rem">
+        <div class="col-12 d-flex justify-content-center">
+
+            <div class="iSetVil-btn-bold btn btn-outline-secondary d-flex w-100 justify-content-center" id="id-regm" style="user-select: text">
+                <p style="text-transform: none">
+                    <b>
+                                http://video.iSETEVIK.com/{{ id }}/video/3/
+                            </b>
+                </p>
+            </div>
+            {# <button type="button" class="my_btn js-tooltip js-copy btn btn-outline-secondary" id="id-regm-rec" style="margin-left: 0rem" data-toggle="tooltip" data-placement="bottom" data-copy="http://isetevik.com/{{ id }}/video/3" title="Скопировать">#}
+                    <button type="button" class="my_btn js-tooltip js-copy btn btn-outline-secondary" id="id-regm-rec" style="margin-left: 0rem" data-toggle="tooltip" data-placement="bottom" data-copy="http://video.isetevik.com/{{ id }}/video/3/" title="Скопировать">
+                    <!-- icon from google's material design library -->
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="24" height="24" viewBox="0 0 24 24"><path d="M17,9H7V7H17M17,13H7V11H17M14,17H7V15H14M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3Z" /></svg>
+                    </button>
+
+        </div>
+    </div>
+    <div class="row d-flex w-100 justify-content-center align-items-center text-content" id="text-5" style="margin-bottom: 1rem; margin-top: 1rem">
+        <div class="col-12 d-flex justify-content-center">
+
+            <div class="iSetVil-btn-bold btn btn-outline-secondary d-flex w-100 justify-content-center" id="id-regm" style="user-select: text">
+                <p style="text-transform: none">
+                    <b>
+                                http://video.iSETEVIK.com/{{ id }}/video/4/
+                            </b>
+                </p>
+            </div>
+            {# <button type="button" class="my_btn js-tooltip js-copy btn btn-outline-secondary" id="id-regm-rec" style="margin-left: 0rem" data-toggle="tooltip" data-placement="bottom" data-copy="http://isetevik.com/{{ id }}/video/4" title="Скопировать">#}
+                    <button type="button" class="my_btn js-tooltip js-copy btn btn-outline-secondary" id="id-regm-rec" style="margin-left: 0rem" data-toggle="tooltip" data-placement="bottom" data-copy="http://video.isetevik.com/{{ id }}/video/4/" title="Скопировать">
+                    <!-- icon from google's material design library -->
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="24" height="24" viewBox="0 0 24 24"><path d="M17,9H7V7H17M17,13H7V11H17M14,17H7V15H14M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3Z" /></svg>
+                    </button>
+
+        </div>
+    </div>
+    <div class="row d-flex w-100 justify-content-center align-items-center text-content" id="text-5" style="margin-bottom: 1rem; margin-top: 1rem">
+        <div class="col-12 d-flex justify-content-center">
+
+            <div class="iSetVil-btn-bold btn btn-outline-secondary d-flex w-100 justify-content-center" id="id-regm" style="user-select: text">
+                <p style="text-transform: none">
+                    <b>
+                                http://video.iSETEVIK.com/{{ id }}/video/5/
+                            </b>
+                </p>
+            </div>
+            {# <button type="button" class="my_btn js-tooltip js-copy btn btn-outline-secondary" id="id-regm-rec" style="margin-left: 0rem" data-toggle="tooltip" data-placement="bottom" data-copy="http://isetevik.com/{{ id }}/video/5" title="Скопировать">#}
+                    <button type="button" class="my_btn js-tooltip js-copy btn btn-outline-secondary" id="id-regm-rec" style="margin-left: 0rem" data-toggle="tooltip" data-placement="bottom" data-copy="http://video.isetevik.com/{{ id }}/video/5/" title="Скопировать">
+                    <!-- icon from google's material design library -->
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="24" height="24" viewBox="0 0 24 24"><path d="M17,9H7V7H17M17,13H7V11H17M14,17H7V15H14M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3Z" /></svg>
+                    </button>
+
+        </div>
+    </div>
+    {#
+    <div class="row d-flex w-100 justify-content-center align-items-center text-content" id="text-6" style="margin-bottom: 1rem; margin-top: 1rem">#} {#
+        <div class="col-12 d-flex justify-content-center">#} {##} {#
+            <div class="iSetVil-btn-bold btn btn-outline-secondary d-flex w-100 justify-content-center" id="id-regm" style="user-select: text">#} {#
+                <p style="text-transform: none">#} {# <b>#}
+{#                                http://video.iSETEVIK.com/{{ id }}/video/6/#}
+{#                            </b>#} {# </p>#} {# </div>#} {# <button type="button" class="my_btn js-tooltip js-copy btn btn-outline-secondary" id="id-regm-rec" style="margin-left: 0rem" data-toggle="tooltip" data-placement="bottom" data-copy="http://isetevik.com/{{ id }}/video/5"
+                title="Скопировать">#}
+{#                    <button type="button" class="my_btn js-tooltip js-copy btn btn-outline-secondary" id="id-regm-rec" style="margin-left: 0rem" data-toggle="tooltip" data-placement="bottom" data-copy="http://video.isetevik.com/{{ id }}/video/6/" title="Скопировать">#}
+{#                    <!-- icon from google's material design library -->#}
+{#                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="24" height="24" viewBox="0 0 24 24"><path d="M17,9H7V7H17M17,13H7V11H17M14,17H7V15H14M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3Z" /></svg>#}
+{#                    </button>#} {##} {# </div>#} {# </div>#}
+
+    <script>
+        $('.ref-row').css("margin-bottom", "0");
+        $('.ref-row').css("padding", "1rem");
+
+        var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+        var vals = [];
+        if (iOS) {
+            $.each($('.col-12 p b'), function(index, data) {
+
+                vals.push($(data).text());
+
+            });
+            $.each($('.col-12').slice(2, 9), function(index, data) {
+
+                vals.push($(data).text());
+                $(data).empty();
+                $(data).append('<b class="iSetVil-btn-bold btn-outline-secondary w-100" id="id-regm" style="cursor: text; padding: 0.5rem 1rem; border: 1px solid #ccc; border-radius: 0.25rem; margin-bottom: 1rem; box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2); font-weight: 400; text-transform: none; letter-spacing: 0.5px; text-align: center">' + vals[index] + '</b>'); {#
+                    $(data).append('<div class="iSetVil-btn-bold btn btn-outline-secondary d-flex w-100 justify-content-center" id="id-regm" t-transform: none"><b>' + vals[index] + ' </p></div>');#
+                }
+
+            });
+
+
+
+        }
+    </script>
+
+</div>
+<script type="text/javascript">
+    function copyToClipboard(text, el) {
+        var copyTest = document.queryCommandSupported('copy');
+        var elOriginalText = el.attr('data-original-title');
+
+        if (copyTest === true) {
+            var copyTextArea = document.createElement("textarea");
+            copyTextArea.value = text;
+            document.body.appendChild(copyTextArea);
+            copyTextArea.select();
+            try {
+                var successful = document.execCommand('copy');
+                var msg = successful ? 'Скопировано!' : 'Не скопировалось';
+                el.attr('data-original-title', msg).tooltip('fadeIn');
+            } catch (err) {
+                console.log('Невозможно скопировать');
+            }
+            document.body.removeChild(copyTextArea);
+            el.attr('data-original-title', elOriginalText);
+        } else {
+            // Fallback if browser doesn't support .execCommand('copy')
+            window.prompt("Скопируйте командами: Ctrl+C or Command+C, Enter", text);
+        }
+    }
+
+    function changeTextIfPhone() {
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || $(window).width() < 712) {
+            // some code..
+            $('.my_br').css("display", "block");
+            $('.col-2').css("padding-left", "0");
+        }
+
+        if ($(window).width() < 770) {
+            $('.iSetVil-btn-bold').css({
+                "font-size": "0.9em"
+            });
+        }
+    }
+
+    $(document).ready(function() {
+        // Initialize
+        // ---------------------------------------------------------------------
+
+        // Tooltips
+        // Requires Bootstrap 3 for functionality
+        $('.js-tooltip').tooltip();
+
+        // Copy to clipboard
+        // Grab any text in the attribute 'data-copy' and pass it to the
+        // copy function
+        $('.js-copy').click(function() {
+            var text = $(this).attr('data-copy');
+            var el = $(this);
+            copyToClipboard(text, el);
+        });
+        changeTextIfPhone();
+    });
+</script>
+{% endblock %}

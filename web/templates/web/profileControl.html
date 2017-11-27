@@ -1,0 +1,98 @@
+{% extends 'web/baseRoom.html' %}
+
+{% load material_form %}
+{% load staticfiles %}
+
+{% block page %}
+
+
+    <div class="row d-flex w-100 justify-content-center align-items-center" id="ref-head" style="padding-top: 4rem;">
+        <div class="col-12 d-flex w-100 justify-content-center">
+            <h2>Профили</h2>
+        </div>
+    </div>
+
+    <div class="row d-flex justify-content-center">
+        <div class="col-12 d-flex justify-content-center">
+            <table id="profiles" class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Vilavi id</th>
+                        <th>ФИО</th>
+                        <th>Телефон</th>
+                        <th>Электронная Почта</th>
+                        <th>Город</th>
+                        {% if isAdmin %}
+                            <th>Вкл/Выкл</th>
+                        {% endif %}
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for profile in profiles %}
+                        <tr>
+                            <td> {{ profile.user }} </td>
+                            <td> {{ profile.name }} </td>
+                            <td> {{ profile.phone }} </td>
+                            <td> {{ profile.email }} </td>
+                            <td> {{ profile.city }} </td>
+                            {% if isAdmin %}
+                                <td>
+                                    <div class="row d-flex justify-content-center" style="margin: 0">
+                                        {% if profile.active %}
+                                            <input id="active-{{ profile.user }}" name="active" type="checkbox" checked>
+                                            <label for="active-{{ profile.user }}"></label>
+                                        {% else %}
+                                            <input id="active-{{ profile.user }}" name="active" type="checkbox">
+                                            <label for="active-{{ profile.user }}"></label>
+                                        {% endif %}
+                                    </div>
+                                    <script>
+                                        checkbox = $('#active-{{ profile.user }}');
+                                        checkbox.change(function () {
+                                            $.post("{% url 'profile_deactivate' %}", { user: {{ profile.user }}, parent: '{{ username }}' }, function(data, status) {
+
+                                                if (status == "success") {
+                                                    if (data['active']) {
+                                                        displaySnackBar("Представитель активирован");
+                                                    } else {
+                                                        displaySnackBar("Представитель деактивирован");
+                                                    }
+
+                                                }
+                                            });
+                                        });
+
+                                    </script>
+                                </td>
+                            {% endif %}
+                            <td>
+{#                                <a href="{% url 'edit_profile' profile.user %}">#}
+                                <a href="{% url 'personal_area' %}edit_profile/{{ profile.user }}">
+                                    <img src="{% static 'media/glyphicons-pencil.png' %}" height="20rem" width="20rem">
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        $('#profiles').DataTable({
+            "paging": false,
+            "info": false,
+            "searching": false
+        });
+
+        $('#room-content').css({ 'display': 'inline-grid'} );
+
+        if (Cookies.get('edit_profile') == 1){
+
+            Cookies.set('edit_profile', 0);
+            displaySnackBar("Данные были успешно сохранены");
+        }
+
+    </script>
+
+{% endblock %}

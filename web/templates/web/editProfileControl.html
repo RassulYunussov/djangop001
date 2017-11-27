@@ -1,0 +1,253 @@
+{% extends 'web/baseRoom.html' %}
+
+{% load material_form %}
+{% load staticfiles %}
+
+{% block page %}
+
+    <div class="row d-flex w-100 justify-content-center align-items-center" id="ref-head" style="padding-top: 4rem;">
+        <div class="col-12 d-flex w-100 justify-content-center">
+            <h2>{{ id }}</h2>
+        </div>
+        <div class="col-12 d-flex w-100 justify-content-center align-items-left">
+            <form method="POST" class="viewform" style="width: 40rem">
+                {% csrf_token %}
+                {% form form=form %}
+                    {% part form.name prefix %}<i class="material-icons prefix">account_box</i>{% endpart %}
+                    {% part form.surname prefix %}<i class="material-icons prefix">account_box</i>{% endpart %}
+                    {% part form.phone prefix %}<i class="material-icons prefix">call</i>{% endpart %}
+                    {% part form.email prefix %}<i class="material-icons prefix">email</i>{% endpart %}
+                    {% part form.vk prefix %}<i class="material-icons prefix mdi mdi-vk">vk</i>{% endpart %}
+                    {% part form.facebook prefix %}<i class="material-icons prefix mdi mdi-facebook"></i>{% endpart %}
+                    {% part form.instagram prefix %}<i class="material-icons prefix mdi mdi-instagram"></i>{% endpart %}
+                    {% part form.twitter prefix %}<i class="material-icons prefix mdi mdi-twitter"></i>{% endpart %}
+                    {% part form.youtube prefix %}<i class="material-icons prefix mdi mdi-youtube-play"></i>{% endpart %}
+                    {% part form.classmate prefix %}<i class="material-icons prefix mdi mdi-walk"></i>{% endpart %}
+
+                {% endform %}
+
+                <button type="submit" name="_submit" class="save btn btn-default" style="background-color: #79b729; color: #FFF;">Сохранить</button>
+            </form>
+        </div>
+    </div>
+    <script>
+
+        $(window).keydown(function(event){
+            if(event.keyCode == 13) {
+                event.preventDefault();
+                return false;
+            }
+        });
+
+        function cityShowDrop() {
+            $.post("{% url 'filter_cities' %}", {}, function( data ) { document.getElementById("id_mycity").value = data['city']; });
+
+            $('#id_mycity').on("click", function () {
+                $('.my-cities-list').show();
+            });
+{#            $(document).on('blur','#id_mycity',function(){#}
+{#                $('.my-cities-list').hide();#}
+{#            });#}
+
+        }
+
+        function citiesFilter(mycities) {
+            city = [];
+            $('#id_mycity').on("input", function () {
+               var field = document.getElementById('id_mycity');
+               var fieldCurrentVal = field.value;
+               $('.my-cities-list').empty();
+               $.each(mycities, function (index, item) {
+                   $('.my-cities-list').append('<li class="parent-element filter-btn d-flex" style="border-right:none">' + index + '</li');
+                   $.each(item, function (id, record) {
+                       if (record.toLowerCase().startsWith(fieldCurrentVal.toLowerCase()) !== -1) {
+
+                           $('#id_mycity_container ul').append('<li id="' + id + '" class="child-element filter-btn d-flex w-100">' + record + '</li');
+                           city.push(record);
+
+
+                       }
+                   });
+               });
+
+               citiesClick($('.child-element'));
+
+
+
+
+{#               $(".my-cities-list li").on("click", function () {#}
+{#                    console.log("fuck");#}
+{#               });#}
+
+{#               $.each($(".my-cities-list li"), function (index, data) {#}
+{#                    data.on("click", function () {#}
+{#                       console.log(data.text());#}
+{#                    });#}
+{#               });#}
+
+
+            });
+
+
+            $("#id_mycity").on('keyup', function (e) {
+                if (e.keyCode == 13) {
+                    if ($('.my-cities-list li').length == 3) {
+                        document.getElementById('id_mycity').value = city.pop();
+                        $('.my-cities-list').hide();
+                    }
+                }
+            });
+
+
+        }
+
+        function cities() {
+            $('#id_mycity_container').append('<ul class="my-cities-list"></ul>');
+            $.post("{% url 'filter_cities' %}", {country: ""}, function( data ) {
+                countries = data;
+                $.each(countries, function (index, item) {
+                     $('#id_mycity_container ul').append('<li class="parent-element filter-btn d-flex" style="border-right:none">' + index + '</li');
+                     $.each(item, function (id, record) {
+                         $('#id_mycity_container ul').append('<li id="' + id + '" class="child-element filter-btn d-flex w-100">' + record + '</li');
+                     });
+                });
+                citiesFilter(data);
+                citiesClick($('.child-element'));
+
+                });
+        }
+
+
+        function phonePlaceHolder() {
+            $('#id_phone').on("input", function(){
+                var fieldPhone = document.getElementById('id_phone');
+                var currentPhone = fieldPhone.value;
+
+                var regex = /\d/g;
+                if (!regex.test(currentPhone.slice(-1))) {
+                    fieldPhone.value = currentPhone.slice(0, currentPhone.length-1);
+                    if (currentPhone.length < 2 || currentPhone.length == 0) {
+                    fieldPhone.value = "+7";
+                    }
+                    if (currentPhone.length > 12) {
+                        fieldPhone.value = currentPhone.slice(0,12);
+                    }
+                }else {
+                    if (currentPhone.length < 2 || currentPhone.length == 0) {
+                    fieldPhone.value = "+7";
+                    }
+                    if (currentPhone.length > 12) {
+                        fieldPhone.value = currentPhone.slice(0,12);
+                    }
+                }
+
+            });
+        }
+        function SocialLinksPlaceHolder() {
+            var initialHolderVK = "https://vk.com/";
+            var initialHolderFB = "https://facebook.com/";
+            var initialHolderIN = "https://instagram.com/";
+            var initialHolderTW = "https://twitter.com/";
+            var initialHolderYO = "https://youtube.com/";
+            var initialHolderCL = "https://ok.ru/";
+            if (document.getElementById('id_vk').value.length < 15) {
+                document.getElementById('id_vk').value = initialHolderVK;
+            }
+            if (document.getElementById('id_facebook').value.length < 21) {
+                document.getElementById('id_facebook').value = initialHolderFB;
+            }
+            if (document.getElementById('id_instagram').value.length < 22) {
+                document.getElementById('id_instagram').value = initialHolderIN;
+            }
+            if (document.getElementById('id_twitter').value.length < 20) {
+                document.getElementById('id_twitter').value = initialHolderTW;
+            }
+            if (document.getElementById('id_youtube').value.length < 20) {
+                document.getElementById('id_youtube').value = initialHolderYO;
+            }
+            if (document.getElementById('id_classmate').value.length < 14) {
+                document.getElementById('id_classmate').value = initialHolderCL;
+            }
+
+
+
+
+
+
+            $('#id_vk').on("input", function(){
+                var fieldVK = document.getElementById('id_vk');
+                var currentAddressVK = fieldVK.value;
+                if (currentAddressVK.length < 15){  fieldVK.value = initialHolderVK;    }
+            });
+            $('#id_facebook').on("input", function () {
+                var fieldFB = document.getElementById('id_facebook');
+                var currentAddressFB = fieldFB.value;
+                if (currentAddressFB.length < 21){  fieldFB.value = initialHolderFB;    }
+            });$('#id_instagram').on("input", function () {
+                var fieldIN = document.getElementById('id_instagram');
+                var currentAddressIN = fieldIN.value;
+                if (currentAddressIN.length < 22){  fieldIN.value = initialHolderIN;    }
+            });$('#id_twitter').on("input", function () {
+                var fieldTW = document.getElementById('id_twitter');
+                var currentAddressTW = fieldTW.value;
+                if (currentAddressTW.length < 20){  fieldTW.value = initialHolderTW;    }
+            });$('#id_youtube').on("input", function () {
+                var fieldYO = document.getElementById('id_youtube');
+                var currentAddressYO = fieldYO.value;
+                if (currentAddressYO.length < 20){  fieldYO.value = initialHolderYO;    }
+            });$('#id_classmate').on("input", function () {
+                var fieldCL = document.getElementById('id_classmate');
+                var currentAddressCL = fieldCL.value;
+                if (currentAddressCL.length < 14){  fieldCL.value = initialHolderCL;    }
+            });
+        }
+
+        function citiesClick(elements) {
+            $.each(elements, function (index, data) {
+                $(this).on("click", function () {
+
+                    document.getElementById('id_mycity').value = data.innerHTML;
+                    $('.my-cities-list').hide()
+
+
+                });
+            });
+
+        }
+
+        cityShowDrop();
+        cities();
+        phonePlaceHolder();
+        SocialLinksPlaceHolder();
+
+        $(document).ready(function(){
+            $('label:contains("Город")').attr("class", "active");
+
+        });
+
+{#        $( document ).ready(function() {#}
+{#            console.log( "ready!" );#}
+{#            $('#id_mycity_container label').addClass("active");#}
+{#        });#}
+
+    </script>
+    <style>
+        .my-cities-list {
+            display: none;
+            box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+        }
+        .parent-element {
+            cursor: default;
+            background-color: #fff;
+            width: 90%;
+            margin-bottom: 0.5rem;
+            margin-top: 0.5rem;
+            padding-left: 0.5rem;
+        }
+
+        .child-element {
+
+            padding-left: 1rem;
+        }
+    </style>
+{% endblock %}

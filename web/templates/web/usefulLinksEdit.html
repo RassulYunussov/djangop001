@@ -1,0 +1,68 @@
+{% extends 'web/baseRoom.html' %}
+
+{% load static %}
+{% load material_form %}
+{% load staticfiles %}
+
+
+
+{% block page %}
+    <div class="row d-flex w-100 justify-content-center align-items-center" id="ref-head" style="padding-top: 4rem;">
+        <div class="col-12 d-flex w-100 justify-content-center">
+            {% if type %}
+                <h2>Создание Ссылки</h2>
+            {% else %}
+                <h2>Редактирование</h2>
+            {% endif %}
+
+        </div>
+        <div class="col-12 d-flex w-100 justify-content-center align-items-left">
+{#            <form method="POST" class="viewform" style="width: 40rem" onsubmit="return submitCity()">#}
+            <form method="POST" class="viewform" onsubmit="return submitLink()" style="width: 40rem">
+                {% csrf_token %}
+                {% form form=form %}
+
+
+{#                    {% part form.youtube prefix %}<i class="material-icons prefix mdi mdi-youtube-play"></i>{% endpart %}#}
+{#                    {% part form.classmate prefix %}<img class="material-icons prefix mdi" src="{% static 'media/odnoklassniki-512.png' %}">{% endpart %}#}
+
+                {% endform %}
+                <button type="submit" class="save btn btn-default" style="background-color: #79b729; color: #FFF;">Сохранить</button>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+
+{#        $(document).on("ready", function () {#}
+{#            if (Cookies.get('edit_profile') == 1){#}
+{#                console.log("EDIT PROF");#}
+{#                Cookies.set('edit_profile', 0);#}
+{#                displaySnackBar("Данные были успешно сохранены");#}
+{#            }#}
+{#        });#}
+
+
+        $(window).keydown(function(event){
+            if(event.keyCode == 13) {
+                event.preventDefault();
+                return false;
+            }
+        });
+
+        function submitLink() {
+            {% if type %}
+                Cookies.set("useful_links", 1);  // 1 - created 2 - editted
+            {% else %}
+                Cookies.set("useful_links", 2);
+            {% endif %}
+            return true;
+        }
+
+
+
+
+    </script>
+    <style>
+{% endblock %}

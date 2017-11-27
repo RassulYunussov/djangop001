@@ -1,0 +1,975 @@
+{% load static %}
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+
+    {% include 'material/includes/material_css.html' %}
+    <script src="{% static 'material/js/jquery.js' %}"></script>
+    {% include 'material/includes/material_js.html' %}
+
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+{#    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">#}
+    <link href="{% static 'css/materialdesignicons.min.css'%}" media="all" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet" />
+
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+    <script src="{% static 'js/js.cookie.js' %}"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+
+
+    <script src="https://d3js.org/d3.v4.js"></script>
+
+    <meta charset="UTF-8">
+    <meta name="google" content="notranslate">
+    <meta http-equiv="Content-Language" content="en">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="shortcut icon" href="{% static 'media/favicon-96x96.png' %}" />
+    <title>iSETEVIK</title>
+
+</head>
+<style>
+    .node circle {
+        fill: #fff;
+        stroke: steelblue;
+        stroke-width: 3px;
+    }
+
+    .node text {
+        font: 12px sans-serif;
+    }
+
+    .link {
+        fill: none;
+        stroke: #ccc;
+        stroke-width: 2px;
+    }
+
+
+    /* Dropdown Button */
+    .filter-btn {
+        background-color: #eceeef;
+        color: black;
+        padding: 0.5rem;
+        font-size: 0.8em;
+        border: solid;
+        border-width: 1px;
+        border-color: #ccc;
+        cursor: pointer;
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Dropdown button on hover & focus */
+    .filter-btn:hover, .filter-btn:focus {
+        background-color: #fff;
+    }
+
+
+    .filter-title {
+        color: black;
+        padding: 0.5rem;
+        font-size: 0.9em;
+        border-bottom: solid;
+        border-width: 1px;
+        border-color: #ccc;
+        cursor: pointer;
+    }
+
+    /* The container <div> - needed to position the dropdown content */
+    #filter {
+        position: relative;
+        display: inline-block;
+    }
+
+    /* Dropdown Content (Hidden by Default) */
+    .filter-choice {
+        display: block;
+        position: relative;
+        background-color: #f9f9f9;
+        width: 100%;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+        padding-top: 1rem;
+        max-height: 13.7rem;
+        overflow-y: auto;
+{#        overflow-x: hidden;#}
+    }
+
+    .filter-holder {
+        margin-bottom: 1.5rem;
+    }
+
+    /* Links inside the dropdown */
+    .filter-choice p {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        text-align: center;
+        margin-bottom: 0;
+    }
+
+    /* Change color of dropdown links on hover */
+    .filter-choice p:hover {
+        background-color: #f1f1f1;
+        cursor: pointer;
+    }
+
+    .filter-container {
+        margin-bottom: 1rem;
+    }
+
+    #filter-content {
+        background-color: #777777;
+        display: none;
+        z-index: 100;
+    }
+
+    /* Snack bar Stuff */
+    #snackbar {
+        visibility: hidden; /* Hidden by default. Visible on click */
+        min-width: 250px; /* Set a default minimum width */
+        background-color: #333; /* Black background color */
+        color: #fff; /* White text color */
+        text-align: center; /* Centered text */
+        border-radius: 2px; /* Rounded borders */
+        padding: 16px; /* Padding */
+        position: fixed; /* Sit on top of the screen */
+        z-index: 1000; /* Add a z-index if needed */
+        bottom: 1rem; /* 30px from the bottom */
+    }
+
+    /* Show the snackbar when clicking on a button (class added with JavaScript) */
+    #snackbar.show {
+        visibility: visible; /* Show the snackbar */
+
+    /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+    However, delay the fade out process for 2.5 seconds */
+        -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    }
+
+    /* Animations to fade the snackbar in and out */
+    @-webkit-keyframes fadein {
+        from {bottom: 0; opacity: 0;}
+        to {bottom: 30px; opacity: 1;}
+    }
+
+    @keyframes fadein {
+        from {bottom: 0; opacity: 0;}
+        to {bottom: 30px; opacity: 1;}
+    }
+
+    @-webkit-keyframes fadeout {
+        from {bottom: 30px; opacity: 1;}
+        to {bottom: 0; opacity: 0;}
+    }
+
+    @keyframes fadeout {
+        from {bottom: 30px; opacity: 1;}
+        to {bottom: 0; opacity: 0;}
+    }
+
+    #tree-text-info {
+        background: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) );
+        display: none;
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        overflow-y: scroll;
+        overflow-x: auto;
+        z-index: 200;
+    }
+
+    .tree-funcs {
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+    }
+
+
+</style>
+<body style="height: 100vh;">
+    <div class="container-fluid" style="padding-right: 0; padding-left: 0; height: 100vh;">
+
+        <div class="row navbare d-flex align-items-center" id="top-bar-room" style="flex-direction: row; margin-right: 0; margin-left: 0; padding-top: 0; height: 4rem;">
+
+            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 col-xl-4 d-flex justify-content-left" id="iSetevik-logo">
+                <h1>iSETEVIK.com</h1>
+            </div>
+
+            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 col-xl-4 d-flex w-100 justify-content-center" id="personal-room">
+                <h2>Личный Кабинет</h2>
+            </div>
+
+            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 col-xl-4 d-flex justify-content-end" id="nav-button-cont" style="padding-right: 4.5rem; padding-left: 4.5rem;">
+
+                <div class="iSetVil-btn col-12 d-flex justify-content-end" style="padding: 0; margin: 0;">
+                    <b class="iSetVil-btn-bold btn btn-outline-secondary" id="nav-button-name">{{ username }}</b>
+                    <div class="btn-group" id="nav-button">
+                        <button type="button" id="nav-but" class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="background-color: #eceeef">
+                            <img src="{% static 'media/glyphicons-exit.png' %}">
+                        </button>
+                        <div class="dropdown-menu" id="nav-dropdown-menu">
+                            <a class="dropdown-item" id="nav-dropdown-item1" style="display: none" href="#">{{ username }}</a>
+                            <div class="dropdown-divider" id="nav-dropdown-divider" style="display: none"></div>
+{#                            <a href="{% url 'edit_profile' %}" id="nav-dropdown-item2" class="dropdown-item">Мой Профиль</a>#}
+                            <a class="dropdown-item" href="{% url 'change_password' %}" id="nav-dropdown-ix   tem3" style="white-space: pre-line">Сменить
+                                Пароль
+                            </a>
+                            <a class="dropdown-item" href="{% url 'logout' %}">Выход</a>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="row d-flex w-100 h-100" id="left_menu" style="margin-top: 0; margin-bottom: 0; margin-right: 0; margin-left: 0;">
+
+            <div class="col-xs-12 col-sm-5 col-md-3 col-lg-3" style="background-color: #eceeef; overflow-y: auto; overflow-x: hidden;">
+
+                <div class="list-group" style="position: relative; margin-top: 4rem; margin-bottom: 2rem">
+                    <ul class="list-group-item" style="padding-left: 1rem;">
+                        <a href="{% url 'edit_profile' %}">Мой Профиль</a>
+                        <i id="email-warning" class="mdi mdi-alert-circle mdi-24px" style="display: none; color: red;" data-toggle="tooltip" data-placement="right" title="Необходимо указать в профиле электронную почту"></i>
+                    </ul>
+                    <ul class="list-group-item" style="padding-left: 1rem;">
+                        <a href="{% url 'check_tree_vertical' %}">Управление Ракетой</a>
+                    </ul>
+                    {% if isAdmin %}
+                        <ul class="list-group-item" style="padding-left: 1rem;">
+                            <a href="{% url 'control_profile' %}">Управление Профилями</a>
+                        </ul>
+                    {% endif %}
+                    <ul class="list-group-item" style="padding-left: 1rem;">
+                        <a href="{% url 'reference_links' %}">Реферальные Ссылки</a>
+                    </ul>
+                    <ul class="list-group-item" style="padding-left: 1rem;">
+                        <a href="{% url 'useful_links' %}">Полезные Ссылки</a>
+                    </ul>
+                    {% if isAdmin %}
+                        <ul class="list-group-item" style="padding-left: 1rem;">
+                            <a href="{% url 'system_settings' %}">Настройки Системы</a>
+                        </ul>
+                    {% endif %}
+
+                </div>
+
+
+{#                <div id="email-warning" class="row" style="display: none; color: #D32F2F; font-size: 0.6rem;">#}
+{#                    <div class="col-12" style="padding-left: 1.25rem">#}
+{#                        Необходимо указать в профиле  электронную почту#}
+{#                    </div>#}
+{#                </div>#}
+
+                <script>
+                    $.post("{% url 'profile_email_exist' %}", {username: '{{ username }}'}, function(data, status) {
+                        if (status == "success") {
+                            $('#id_email_container')
+                                .append('<div class="error-email col-12" style="display: none; color: rgb(211, 47, 47); font-size: 0.6rem;">Введите email </div>');
+                            if (data['exist'] == 0 ) {
+                                $('#email-warning').show();
+                                {% if not child %}
+                                    $('.error-email').show();
+                                {% endif %}
+                            } else {
+                                $('#email-warning').hide();
+                            }
+
+                        }
+                    });
+                </script>
+
+
+                {% if isTree %}
+                    <div class="tree-legend" style="background-color: #FFF;  margin-bottom: 0.5rem; padding-left: 1rem; padding-bottom: 0.5rem">
+                        <div class="row d-flex justify-content-center">
+                            <b>ЛЕГЕНДА</b>
+                        </div>
+                        <div class="row d-flex align-items-center" style="margin-left: 0; margin-right: 0">
+                            <svg style="height: 1rem; width: 1rem;">
+                                <circle style="fill: rgb(26, 140, 255); r: 0.5rem; cx:0.5rem; cy:0.5rem;"/>
+                            </svg>
+                            <div class="col-11">Бонусная Активность Выполнена</div>
+                        </div>
+
+                        <div class="row d-flex align-items-center" style="margin-left: 0; margin-right: 0">
+                            <svg style="height: 1rem; width: 1rem">
+                                <circle style="fill: rgb(83, 255, 26); r: 0.5rem; cx:0.5rem; cy:0.5rem;"/>
+                            </svg>
+                            <div class="col-11">Накопительная Активность Выполнена</div>
+                        </div>
+
+                        <div class="row d-flex align-items-center" style="margin-left: 0; margin-right: 0">
+                            <svg style="height: 1rem; width: 1rem">
+                                <circle style="fill: rgb(255, 77, 77); r: 0.5rem; cx:0.5rem; cy:0.5rem;"/>
+                            </svg>
+                            <div class="col-11">Активность не Выполнена</div>
+                        </div>
+
+                        <div class="row d-flex align-items-center" style="margin-left: 0; margin-right: 0">
+                            <svg style="height: 1rem; width: 1rem;">
+                                <circle style="fill: rgb(55, 71, 79); r: 0.5rem; cx:0.5rem; cy:0.5rem;"/>
+                            </svg>
+                            <div class="col-11">Выключен</div>
+                        </div>
+                    </div>
+
+
+                    <div id="tree-funcs-container" class="filter-menu d-flex flex-column justify-content-center" style="background-color: #FFF;  margin-bottom: 0.5rem; padding-bottom: 0.5rem;">
+
+                        <div class="row filter-holder d-flex justify-content-center">
+                            <b>ФУНКЦИИ</b>
+{#                            <div class="col-4 d-flex justify-content-center">#}
+{#                                <a href="" style="margin-left: 0">#}
+{#                                    <i class="mdi mdi-refresh mdi-24px"></i>#}
+{#                                </a>#}
+{#                            </div>#}
+{#                            <div class="col-4 d-flex justify-content-center">#}
+{#                                <a href="{% url 'tree' %}" style="margin-right: 1rem;">#}
+{#                                    <i class="mdi mdi-table-large mdi-24px"></i>#}
+{#                                </a>#}
+{#                            </div>#}
+{#                            <div class="col-4 d-flex justify-content-center">#}
+{#                                <a href="{% url 'check_tree_vertical' %}">#}
+{#                                    <i class="mdi mdi-sitemap mdi-24px" style="margin-left: 1rem"></i>#}
+{#                                </a>#}
+{#                            </div>#}
+                        </div>
+
+                        <div class="row filter-holder d-flex justify-content-center">
+                            <div class="tree-func row w-100 d-flex justify-content-center">
+                                <div class="tree-func-left-title col-12 d-flex justify-content-center">
+                                    Действия
+                                </div>
+                                <div class="col-11 d-flex" id="tree-collapse">
+                                    <button class="tree-funcs btn btn-secondary d-flex w-100" style="">
+                                        Свернуть
+                                    </button>
+                                </div>
+
+                                <div class="col-11 d-flex" id="tree-expand">
+                                    <button class="tree-funcs btn btn-secondary d-flex w-100" style="">
+                                        Развернуть
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="tree-func row w-100 d-flex justify-content-center">
+                                <div class="tree-func-right-title col-12 d-flex justify-content-center">
+                                    Демонстрация
+                                </div>
+                                <div class="col-11 d-flex" id="tree-collapse">
+                                    {% if isVertical %}
+                                        <a class="tree-funcs btn btn-secondary d-flex w-100" href="{% url 'check_tree_vertical' %}">
+                                    {% else %}
+                                        <a class="tree-funcs btn btn-secondary d-flex w-100" href="{% url 'check_tree' %}">
+                                    {% endif %}
+                                        Все
+                                    </a>
+                                </div>
+
+                                <div class="col-11 d-flex" id="tree-expand">
+                                    {% if isVertical%}
+                                        <a class="tree-funcs btn btn-secondary d-flex w-100" href="{% url 'check_tree_active_vertical' %}">
+                                    {% else %}
+                                        <a class="tree-funcs btn btn-secondary d-flex w-100" href="{% url 'check_tree_active' %}">
+                                    {% endif %}
+                                        Только Активные
+                                    </a>
+                                </div>
+
+                                <div class="col-11 d-flex" id="tree-expand">
+                                    {% if isVertical %}
+                                        <a class="tree-funcs btn btn-secondary d-flex w-100" href="{% url 'check_tree_fs_vertical' %}" target="_blank">
+                                    {% else %}
+                                        <a class="tree-funcs btn btn-secondary d-flex w-100" href="{% url 'check_tree_fs' %}" target="_blank">
+                                    {% endif %}
+                                        На весь Экран
+                                    </a>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+
+                {% endif %}
+
+
+
+            </div>
+
+
+
+
+
+
+            <div class="col-xs-12 col-sm-6 col-md-8 col-lg-8" id="room-content" style="padding-bottom: 3rem; margin-top: 2rem; overflow-x: scroll; overflow-y: scroll">
+                {% block page %}
+                {% endblock %}
+            </div>
+
+
+            <div class="col-xs-0 col-sm-1 col-md-1 col-lg-1" style="background-color: #eceeef;">
+            </div>
+
+        </div>
+
+
+        <div class="d-flex justify-content-center">
+            <div id="snackbar">Some text some message..</div>
+        </div>
+
+        <div id="tree-text-info">
+            <div class="modal-dialog modal-notify modal-vilavi" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <p>Общая информация</p>
+                        <button id="tree-text-close" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true" class="white-text">×</span>
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="md-form md-form-static">
+                            <label>ID представителя</label>
+                            <p id="tree-id" class="form-control-static"></p>
+                            <hr>
+                        </div>
+                        <div class="md-form md-form-static">
+                            <label>ФИО представителя</label>
+                            <p id="tree-fullName" class="form-control-static"></p>
+                            <hr>
+                        </div>
+                        <div class="md-form md-form-static">
+                            <label>Квалификация</label>
+                            <p id="tree-qual" class="form-control-static"></p>
+                            <hr>
+                        </div>
+                        <div class="md-form md-form-static">
+                            <label>GPV</label>
+                            <p id="tree-gpv" class="form-control-static"></p>
+                            <hr>
+                        </div>
+                        <div class="md-form md-form-static">
+                            <label>Телефон</label>
+                            <p id="tree-phone" class="form-control-static"></p>
+                            <hr>
+                        </div>
+{#                        <div class="md-form md-form-static">#}
+{#                            <label>Показан в последний раз</label>#}
+{#                            <p id="tree-lastTimeShow" class="form-control-static"></p>#}
+{#                            <hr>#}
+{#                        </div>#}
+                        <div class="md-form md-form-static">
+                            <div class="md-form md-form-static">
+                                <label>Вкл/Выкл</label>
+                            </div>
+                            <div class="md-form md-form-static">
+                                <input id="tree-active" name="active" type="checkbox" checked>
+                                <label for="tree-active"></label>
+                            </div>
+                             <script>
+                                var formcheckbox = $('#tree-active');
+
+                                formcheckbox.change(function () {
+                                    var ul = $('#tree-id').text();
+                                    var id = nodes[0].data.name;
+
+                                    if (id != ul) {
+                                        $.post("{% url 'vilavi_activity' %}", {ul: ul, id: id}, function(data, status) {
+                                            if (status == "success") {
+    {#                                            console.log(data);#}
+                                                listOfNodes = data['node_list'];
+    {#                                            console.log("rgb(255, 255, 255)" == $('#circle-'+listOfNodes[0]['name']).css("fill"));#}
+    {#                                            if (!("rgb(255, 255, 255)" == $('#circle-'+listOfNodes[0]['name']).css("fill"))) {#}
+    {#                                                $('#circle-' + listOfNodes[0]['name']).css({"fill": listOfNodes[0]["color"]});#}
+    {#                                            }#}
+    {#                                            $('#circle-'+listOfNodes[0]['name']).css({"stroke": listOfNodes[0]["color"]});#}
+    {#                                            $('#link-'+listOfNodes[0]['name']).css({"stroke": listOfNodes[0]["color"]});#}
+                                                $('.modal-header').css("background-color", listOfNodes[0]["color"]);
+                                                location.reload();
+
+    {#                                            for (i = 0; i < listOfNodes.length; i++) {#}
+    {#                                                element = $('#circle-'+listOfNodes[i]['name']);#}
+    {#                                                console.log(element);#}
+    {#                                                $('#circle-'+listOfNodes[i]['name']).css({"fill": listOfNodes[i]["color"]});#}
+    {##}
+    {#                                            }#}
+                                            }
+                                        });
+                                    } else {
+                                        displaySnackBar("Вы не можете отключить себя!!!");
+                                        document.getElementById('tree-active').checked = true;
+                                    }
+
+                                });
+                             </script>
+
+                            <hr>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+
+
+    <script>
+
+        function displaySnackBar(textToDisplay) {
+            var snack = $('#snackbar');
+            snack.text(textToDisplay);
+            snack.addClass('show');
+            setTimeout(function () {
+                snack.removeClass('show')
+            }, 3000);
+        }
+
+        function leftMenuMobile() {
+
+                if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || $(window).width() < 712) {
+                    // some code..
+                    $('#top-bar-room').css("height", "8rem");
+                    $('#top-bar-room').css("font-size", "0.5rem");
+                    $('#left_menu').css("margin-top","6rem");
+{#                    $('#left_menu').css("position","fixed");#}
+                    $('#left_menu').css("z-index","200");
+                    $('#room_door').css({"display": "flex", "justify-content": "center"});
+                    $('#iSetevik-logo').css("justify-content", "center");
+                    $('#ref-head').css("padding-top", "0");
+{#                    $('#room-content').css("overflow", "scroll");#}
+                    $('#nav-dropdown-item2').text("Редактировать Профиль");
+                    $('#nav-dropdown-item3').css("white-space", "nowrap");
+                    $('#nav-button-name').hide();
+                    $('#nav-button').css("width", "100%");
+                    $('#nav-dropdown-menu').css("width", "100%");
+                    $('#nav-dropdown-menu').css("text-align", "center");
+                    $('#nav-dropdown-item1').show();
+                    $('#nav-dropdown-divider').show();
+                    $('#nav-but').css("width", "100%");
+                    $('#tree-header').css({"font-size": "0.9em"});
+
+                }
+                if ($(window).width() < 1125) {
+                    $($('#tree-collapse').find('button')).css("padding", "0");
+                    $($('#tree-expand').find("button")).css("padding", "0");
+                }
+                if ($(window).width() < 561) {
+                    $('.tree-funcs').css({"font-size": "1em"});
+                    $('#tree-funcs-container').css({"font-size": "1em"});
+                }
+
+
+
+        }
+        leftMenuMobile();
+
+        var filtering = {};
+        {% if all_dict %}
+
+            var all_dict = {{ all_dict | safe}};
+        {% else %}
+            var all_dict = {};
+        {% endif %}
+
+        function resetFilters() {
+            var checkboxes = $('input[type="checkbox"]');
+            var radios = $('input[type="radio"]');
+            var texts = $('input[type="text"]');
+            for (i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].checked = true;
+            }
+            for (i = 0; i < radios.length; i++) {
+                radios[i].checked = false;
+            }
+            for (i = 0; i < texts.length; i++) {
+                texts[i].value = '';
+            }
+        }
+
+        function qualCheck(index){
+            if (all_dict['qualifications'] == undefined) {
+                return 'checked';
+            }
+            for (i=0; i<all_dict['qualifications'].length; i++) {
+                if (all_dict['qualifications'][i]['index'] == index) {
+                    return 'checked';
+                }
+            }
+            return '';
+        }
+        function levelCheck(index){
+            if (all_dict['levels'] == undefined) {
+                return 'checked';
+            }
+            for (i=0; i<all_dict['levels'].length; i++) {
+                if (all_dict['levels'][i]['data'] == index) {
+                    return 'checked';
+                }
+            }
+            return '';
+        }
+        function activityCheck(){
+            if (all_dict['activity'] == undefined) {
+                return;
+            }
+            var val = all_dict['activity'];
+            if (val == "000") {
+                document.getElementById('activity_ok').checked = false;
+                document.getElementById('activity_cum').checked = false;
+                document.getElementById('activity_not').checked = false;
+                return;
+            } else if (val == "001") {
+                document.getElementById('activity_ok').checked = false;
+                document.getElementById('activity_cum').checked = false;
+                document.getElementById('activity_not').checked = true;
+                return;
+            } else if (val == "010") {
+                document.getElementById('activity_ok').checked = false;
+                document.getElementById('activity_cum').checked = true;
+                document.getElementById('activity_not').checked = false;
+                return;
+            } else if (val == "011") {
+                document.getElementById('activity_ok').checked = false;
+                document.getElementById('activity_cum').checked = true;
+                document.getElementById('activity_not').checked = true;
+                return;
+            } else if (val == "100") {
+                document.getElementById('activity_ok').checked = true;
+                document.getElementById('activity_cum').checked = false;
+                document.getElementById('activity_not').checked = false;
+                return;
+            } else if (val == "101") {
+                document.getElementById('activity_ok').checked = true;
+                document.getElementById('activity_cum').checked = false;
+                document.getElementById('activity_not').checked = true;
+                return;
+            } else if (val == "110") {
+                document.getElementById('activity_ok').checked = true;
+                document.getElementById('activity_cum').checked = true;
+                document.getElementById('activity_not').checked = false;
+                return;
+            } else if (val == "111") {
+                document.getElementById('activity_ok').checked = true;
+                document.getElementById('activity_cum').checked = true;
+                document.getElementById('activity_not').checked = true;
+                return;
+            } else {
+                return;
+            }
+        }
+        function activeCheck(){
+            if (all_dict['active'] == undefined) {
+                return;
+            }
+            var val = all_dict['active'];
+            if (val == "00") {
+                document.getElementById('active_ok').checked = false;
+                document.getElementById('active_not').checked = false;
+                return;
+            } else if (val == "01") {
+                document.getElementById('active_ok').checked = false;
+                document.getElementById('active_not').checked = true;
+                return;
+            } else if (val == "10") {
+                document.getElementById('active_ok').checked = true;
+                document.getElementById('active_not').checked = false;
+                return;
+            } else if (val == "11") {
+                document.getElementById('active_ok').checked = true;
+                document.getElementById('active_not').checked = true;
+                return;
+            } else {
+                return;
+            }
+        }
+        function nsfCheck() {
+            if (all_dict['name'] == undefined) {
+                return;
+            } else {
+                document.getElementById("id_nsf").value = all_dict['name'];
+                return;
+            }
+        }
+        function gpvCheck() {
+            if (all_dict['gpv'] == undefined) {
+                return;
+            } else {
+                document.getElementById("id_gpv").value = all_dict['gpv']['value'];
+                var val = all_dict['gpv']['sign'];
+                if (val == "000") {
+                    document.getElementById('sign_more').checked = false;
+                    document.getElementById('sign_equal').checked = false;
+                    document.getElementById('sign_less').checked = false;
+                    return;
+                } else if (val == "001") {
+                    document.getElementById('sign_more').checked = false;
+                    document.getElementById('sign_equal').checked = false;
+                    document.getElementById('sign_less').checked = true;
+                    return;
+                }else if (val == "010") {
+                    document.getElementById('sign_more').checked = false;
+                    document.getElementById('sign_equal').checked = true;
+                    document.getElementById('sign_less').checked = false;
+                    return;
+                }else if (val == "100") {
+                    document.getElementById('sign_more').checked = true;
+                    document.getElementById('sign_equal').checked = false;
+                    document.getElementById('sign_less').checked = false;
+                    return;
+                }else {
+                    return;
+                }
+            }
+        }
+
+
+        function qualificationOption() {
+            myurl = "127.0.0.1:8000/" + "{% url 'vilavi_qualifications' %}";
+            myquals = $('#myqual');
+{#            console.log(myquals.html());#}
+{#            $.get("http://127.0.0.1:8000/api/vilavi_qualifications", function( data ) {#}
+            $.get("{% url 'vilavi_qualifications' %}", function( data ) {
+{#                myquals.append('<div class=>');#}
+                qualsCont = myquals.append('<div class="quals-container"></div>');
+                qualsCont.append('<div class="quals-but d-flex flex-row">' +
+                        '<div id="qual-value-all" class="col-10"></div><div id="" class="checks col-2" style="padding : 0">' +
+                        '<input id="qual-all" name="active_ok" type="checkbox">' +
+                        '<label for="qual-all"></label>' +
+                        '</div>' +
+                        '</div>');
+                $.each(data['qualifications'], function (index, value) {
+                    element = '<div class="quals-but d-flex flex-row">' +
+                        '<div id="qual-value-' + index + '" class="col-10">' + value + ':</div><div id="" class="checks col-2" style="padding : 0">' +
+                        '<input id="qual-' + index + '" name="active_ok" type="checkbox" ' + qualCheck(index) + '>' +
+                        '<label for="qual-' + index + '"></label>' +
+                        '</div>' +
+                        '</div>';
+
+                    qualsCont.append(element);
+
+                });
+                qualAll();
+            });
+
+
+        }
+
+        function qualAll() {
+            var chooseAllQual = $('#qual-all');
+            chooseAllQual.on("change", function () {
+                var els = $('input[id^="qual"]');
+                var value = document.getElementById("qual-all").checked;
+                for (i = 0; i < els.length; i++) {
+                    els[i].checked = value;
+                }
+            });
+
+        }
+
+
+        function levelOption() {
+            myurl = "127.0.0.1:8000/" + "{% url 'vilavi_level' %}";
+            mylevels = $('#mylevel');
+
+            $.get("{% url 'vilavi_level' %}", function( data ) {
+
+                levelsCont = mylevels.append('<div class="levels-container"></div>');
+                levelsCont.append('<div class="levels-but d-flex flex-row">' +
+                        '<div id="level-value-all" class="col-10"></div><div class="col-2" style="padding : 0;">' +
+                        '<input id="level-all" name="active_ok" type="checkbox">' +
+                        '<label for="level-all"></label>' +
+                        '</div>' +
+                        '</div>');
+                $.each(data['levels'], function (index, value) {
+
+                    element = '<div class="levels-but d-flex flex-row">' +
+                        '<div id="level-value-' + index + '" class="col-10">' + value + ':</div><div class="col-2" style="padding : 0;">' +
+                        '<input id="level-' + index + '" name="active_ok" type="checkbox" ' + levelCheck(index) + '>' +
+                        '<label for="level-' + index + '"></label>' +
+                        '</div>' +
+                        '</div>';
+
+                    levelsCont.append(element);
+
+                });
+
+                $('label:contains("Город")').attr("class", "active");
+
+                levelAll();
+                activityAll();
+            });
+        }
+        function levelAll() {
+            var chooseAllLevel = $('#level-all');
+
+            chooseAllLevel.on("change", function () {
+                var els = $('input[id^="level"]');
+
+                var value = document.getElementById('level-all').checked;
+                for (i = 0; i < els.length; i++) {
+                    els[i].checked = value;
+                }
+            });
+        }
+
+
+        function activityAll() {
+            var chooseAllActivity = $('#activity_all');
+            chooseAllActivity.on("change", function () {
+                var els = $('input[id^="activity"]');
+
+                var value = document.getElementById('activity_all').checked;
+                for (i = 0; i < els.length; i++) {
+                    els[i].checked = value;
+                }
+            });
+        }
+
+
+
+
+
+        function nsfSubmit() {
+            filtering['name'] = $.trim(document.getElementById('id_nsf').value);
+        }
+        
+        function qualSubmit() {
+            filtering['qualifications'] = [];
+            var variants = $('.quals-but');
+            var variantsWithoutAll = variants.slice(1, variants.length);
+
+            $.each(variantsWithoutAll, function (index, data) {
+{#                console.log($(data).find('#qual-'+index).checked);#}
+                if (document.getElementById('qual-'+index).checked) {
+                    rec = {};
+                    rec['index'] = index;
+                    rec['data'] = $('#qual-value-'+index).text().slice(0, -1);
+                    filtering['qualifications'].push(rec);
+                }
+
+            });
+        }
+        function levelSubmit() {
+            filtering['levels'] = [];
+            var variants = $('.levels-but');
+            var variantsWithoutAll = variants.slice(1, variants.length);
+
+            $.each(variantsWithoutAll, function (index, data) {
+{#                console.log($(data).find('#qual-'+index).checked);#}
+                if (document.getElementById('level-'+index).checked) {
+                    rec = {};
+                    rec['data'] = $('#level-value-'+index).text().slice(0,1);
+                    filtering['levels'].push(rec);
+                }
+
+            });
+        }
+
+        function gpvSubmit() {
+            filtering['gpv'] = {};
+            var gpv_val = document.getElementById('id_gpv').value;
+            var sign_more = document.getElementById('sign_more').checked ? "1" : "0";
+            var sign_equal = document.getElementById('sign_equal').checked ? "1" : "0";
+            var sign_less = document.getElementById('sign_less').checked ? "1" : "0";
+
+            rec = {};
+            rec['sign'] = sign_more + sign_equal + sign_less;
+            rec['value'] = gpv_val;
+            filtering['gpv'] = rec;
+        }
+
+        function activitySubmit() {
+            var activity_cum = document.getElementById('activity_cum').checked ? "1" : "0";
+            var activity_true = document.getElementById('activity_ok').checked ? "1" : "0";
+            var activity_false = document.getElementById('activity_not').checked ? "1" : "0";
+            filtering['activity'] = activity_true + activity_cum +activity_false;
+        }
+        function activeSubmit() {
+            var active_true = document.getElementById('active_ok').checked ? "1" : "0";
+            var active_false = document.getElementById('active_not').checked ? "1" : "0";
+            filtering['active'] = active_true + active_false;
+
+        }
+
+
+        function hoveringDrops() {
+            $('#nav-but').hover(function () {
+                $('#nav-dropdown-menu').toggle();
+            });
+            $('#nav-dropdown-menu').hover(function () {
+                $('#nav-dropdown-menu').toggle();
+            });
+
+        }
+
+        qualificationOption();
+        levelOption();
+{#        hoveringDrops();#}
+
+
+
+        nsfCheck();
+        gpvCheck();
+        activityCheck();
+        activeCheck();
+
+
+
+        function submitForFilter() {
+            $('#all-dict-submit').on("click", function () {
+{#            $('#nav-but').on("click", function () {#}
+{#                put funcs here#}
+                nsfSubmit();
+                qualSubmit();
+                levelSubmit();
+                gpvSubmit();
+                activitySubmit();
+                activeSubmit();
+
+{#                #}
+                var json = JSON.stringify(filtering);
+
+                $('#all-dict').attr("value", json);
+            });
+        }
+
+        submitForFilter();
+
+
+
+
+
+
+
+
+
+
+    </script>
+</body>
+</html>
