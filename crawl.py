@@ -1,12 +1,20 @@
 #!/home/developer/office.iSetevik/iSetevik/officevenv/bin/python
 
-import requests
+import requests,requests.utils, pickle
 from bs4 import BeautifulSoup
 import MySQLdb
 
 mysqllogin='isetevik'
 mysqlpwd='isetevik909#'
 mysqldb='isetevik'
+LOG_URL = "https://office.vilavi.com/Account/Login?ReturnUrl=%2F"
+URL = "https://office.vilavi.com/Account/Login?returnurl=%2F"
+TREE_URL = "https://office.vilavi.com/Info/GetMlmTree?Generation=All&BcNumber=All&BcSide=All"
+payload = {
+        'Login': '909555',
+        'Password': 'qBEY07!@#'
+}
+path_to_cookies_file='/home/rassul/session.txt'
 
 def log(message,cursor=None):
     if (cursor is not None): 
@@ -18,9 +26,9 @@ def start():
     c = db.cursor()
     c.execute('SELECT * FROM crawler_status where ID=1')
     row = c.fetchone()
-    if row[1]==30:
+    if row[1]>10:
         c.execute('UPDATE crawler_status set status=0,starttime=null,endtime=null')
-        c.execute("insert into crawler_log(message) values('tried 30 times, reseting!')")
+        c.execute("insert into crawler_log(message) values('tried 10 times, reseting!')")
         db.commit()
         db.close()
         return False
@@ -44,14 +52,6 @@ def end(status,lastmessage):
 def crawl():
     db = MySQLdb.connect(host="localhost",user=mysqllogin,passwd=mysqlpwd,db=mysqldb,charset="utf8")
     c = db.cursor()
-    LOG_URL = "https://office.vilavi.com/Account/Login?ReturnUrl=%2F"
-    URL = "https://office.vilavi.com/Account/Login?returnurl=%2F"
-    TREE_URL = "https://office.vilavi.com/Info/GetMlmTree?Generation=All&BcNumber=All&BcSide=All"
-
-    payload = {
-        'Login': '909555',
-        'Password': 'qBEY07!@#'
-    }
     c.execute('SELECT * FROM web_superadminsettings')
     rows = c.fetchall()
     for a in rows:
@@ -59,21 +59,33 @@ def crawl():
         payload['Password'] = a[4]
     db.close()
     with requests.Session() as c:
-        soup = BeautifulSoup(c.get(LOG_URL).content, "html.parser")
-        token = soup.find_all('input')
-        csrf = ''
-        for a in token:
-            if a['name'] == '__RequestVerificationToken':
-                csrf = a['value']
-        payload['__RequestVerificationToken'] = csrf
-
-        thing = c.post(URL, data=payload)
-        my_csv = c.get(TREE_URL)
-        my_csv.encoding = 'utf-8'
+        set_cookies(c)
+        my_csv = get_csv(c)
+        if "uId,sId,gpv,r,q,g,uL,uN,uP,uR,uA,uAs,uAv,dd" not in my_csv.text: 
+            refresh_cookies(c)
+            my_csv = get_csv(c)
         rows = my_csv.text.split('\n')[1:]
+        return list(filter(lambda r:len(r)>0,rows))    
 
-        return list(filter(lambda r:len(r)>0,rows)) 
+def refresh_cookies(session):
+    with requests.Session() as c:
+        soup = BeautifulSoup(c.get(LOG_URL).content, "html.parser")
+        token = [x for x in soup.find_all('input') if x['name']=='__RequestVerificationToken']
+        payload['__RequestVerificationToken'] = token[0]['value'] 
+        thing = c.post(URL, data=payload)
+        with open(path_to_cookies_file, 'wb') as f:
+           pickle.dump(requests.utils.dict_from_cookiejar(c.cookies), f)
+        session.cookies = c.cookies
 
+def set_cookies(session):
+    with open(path_to_cookies_file,'rb') as f:
+           cookies = requests.utils.cookiejar_from_dict(pickle.load(f))
+           session.cookies = cookies
+
+def get_csv(session):
+    my_csv = session.get(TREE_URL)
+    my_csv.encoding = 'utf-8'
+    return my_csv
 
 def migrate():
     log('migrate-begin')
@@ -85,10 +97,12 @@ def migrate():
     c.execute('SELECT count(*) FROM web_previlavifetch')
     stage_count = c.fetchone()
     if(stage_count[0]>0):
-        c.execute('TRUNCATE TABLE web_vilavifetch')
+        c.execute('delete from web_vilavifetch')
         c.execute('INSERT INTO web_vilavifetch (uid,sid,gpv,r,q,g,ul,un,up,ur,ua,uas,uav,dd) select uid,sid,gpv,r,q,g,ul,un,up,ur,ua,uas,uav,dd from web_previlavifetch')
         c.execute('UPDATE web_superadminsettings set problems = 0, date = NOW() where id = 1')
-        c.execute('update web_tree, web_vilavifetch set web_tree.gpv = web_vilavifetch.gpv, web_tree.ua=web_vilavifetch.ua, web_tree.q=web_vilavifetch.q where web_tree.ul=web_vilavifetch.ul')
+        c.execute('update web_tree, web_vilavifetch set web_tree.uid=web_vilavifetch.uid,web_tree.sid=web_vilavifetch.sid, web_tree.gpv = web_vilavifetch.gpv, web_tree.ua=web_vilavifetch.ua, web_tree.q=web_vilavifetch.q where web_tree.ul=web_vilavifetch.ul')
+        c.execute('update web_tree set active = 0 where ul in (select ul from (select ul from web_tree w where not exists (select uid from web_tree wt where wt.sid=w.uid) and datediff(now(),str_to_date(ur,\'%d.%m.%Y\')) > 60 and ul not in (select ul from web_vilavifetch)) ssq)');
+        c.execute('delete from web_tree where active = 0 and ul in (select ul from (select ul from web_tree w where not exists (select uid from web_tree wt where wt.sid=w.uid) and active = 0 and datediff(now(),str_to_date(ur,\'%d.%m.%Y\')) > 120 and ul not in (select ul from web_vilavifetch)) ssq)');
         db.commit()
         with requests.Session() as s:
             s.get(FILL_TREE)
