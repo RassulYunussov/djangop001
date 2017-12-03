@@ -151,18 +151,18 @@ def populate():
                     #return False
             else:
                 c.execute('UPDATE web_superadminsettings set problems = 1 where id = 1')
+                log('Number of columns changed!',c)
                 db.commit()
                 db.close()
-                log('Number of columns changed!')
                 return False 
         db.commit()
         db.close()
         return True
     else:
         c.execute('UPDATE web_superadminsettings set problems = 1 where id = 1')
+        log('Nothing came from  VILAVI',c)
         db.commit()
         db.close()
-        log('Nothing came from  VILAVI')
         return False
 if start():
     if populate():

@@ -22,6 +22,7 @@
                         <th>Телефон</th>
                         <th>Электронная Почта</th>
                         <th>Город</th>
+                        <th>Дата регистрации</th>
                         {% if isAdmin %}
                             <th>Вкл/Выкл</th>
                         {% endif %}
@@ -36,6 +37,7 @@
                             <td> {{ profile.phone }} </td>
                             <td> {{ profile.email }} </td>
                             <td> {{ profile.city }} </td>
+                            <td> {{ profile.register_date }} </td>
                             {% if isAdmin %}
                                 <td>
                                     <div class="row d-flex justify-content-center" style="margin: 0">
