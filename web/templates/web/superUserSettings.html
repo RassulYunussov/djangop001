@@ -13,7 +13,7 @@
 
         </div>
 
-        <div class="col-10 d-flex w-100 alert alert-info justify-content-center" style="margin-bottom: 0">Дата последнего обновления ракеты: {{ date }}</div>
+        <div class="col-10 d-flex w-100 alert alert-info justify-content-center" style="margin-bottom: 0">Дата последнего обновления ракеты: {{ date |date:'Y-m-d H:i'}}</div>
         {% if problems %}
             <div class="col-10 d-flex w-100 alert alert-danger justify-content-center" style="color: rgb(211, 47, 47); font-size: 0.6rem;">
                 Данные не обновляются, проверьте логин и пароль учетной записи.
