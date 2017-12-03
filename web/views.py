@@ -981,8 +981,8 @@ class ControlProfiles(View):
 
         username = getProfileName(request)
         profile_list = Profile.objects.filter(user__in=chilist).order_by('name')
-        print("PROFILE LIST")
-        print(profile_list)
+        #print("PROFILE LIST")
+        #print(profile_list)
         return render(request, self.template_name, {
             'profiles': profile_list,
             'username': username,
