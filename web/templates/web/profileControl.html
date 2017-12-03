@@ -80,9 +80,15 @@
     </div>
     <script>
         $('#profiles').DataTable({
-            "paging": false,
+            "paging": true,
+            "pageLength": 50,
+            "lengthChange": false,
             "info": false,
-            "searching": false
+            "searching": true,
+            "language": {
+               "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Russian.json"
+            }
+
         });
 
         $('#room-content').css({ 'display': 'inline-grid'} );
