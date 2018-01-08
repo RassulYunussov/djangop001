@@ -980,7 +980,7 @@ class ControlProfiles(View):
 
 
         username = getProfileName(request)
-        profile_list = Profile.objects.filter(user__in=chilist).order_by('name')
+        profile_list = Profile.objects.filter(user__in=chilist)
         #print("PROFILE LIST")
         #print(profile_list)
         return render(request, self.template_name, {
