@@ -971,8 +971,6 @@ class ControlProfiles(View):
         profile = Profile.objects.get(user=request.user)
         if int(request.user.username) == 909555:
             self.isAdmin = True
-        if not self.isAdmin:
-            return redirect('check_tree_vertical')
 
         data = dataForTreeFromTable(forD3=False, profileObject = profile, onlyActive = False)
         chilist = findChildren(data, baseLevel=data['level'])
@@ -981,8 +979,7 @@ class ControlProfiles(View):
 
         username = getProfileName(request)
         profile_list = Profile.objects.filter(user__in=chilist)
-        #print("PROFILE LIST")
-        #print(profile_list)
+
         return render(request, self.template_name, {
             'profiles': profile_list,
             'username': username,
