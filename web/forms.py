@@ -218,6 +218,7 @@ class UserCreationForm(forms.ModelForm):
             "__RequestVerificationToken": "",
             "Agree": True,
             "Gender": self.cleaned_data['gender'],
+            "City":"Москва"
         }
         vilavi_id = validateVilavi(data)
         print('[ID]', vilavi_id)
