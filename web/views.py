@@ -1799,6 +1799,8 @@ class FillTreeOfAllProfilesView(View):
             grandNode = dataForTreeFromVilavi()
             # print(str(grandNode['name']))
             targetNode = findNode(grandNode, profile.user)
+            if(targetNode is None):
+                continue
             childrenList = findChildren(targetNode, targetNode['level'])
 
 

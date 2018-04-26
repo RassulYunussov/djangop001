@@ -154,7 +154,7 @@ class UserCreationForm(forms.ModelForm):
         required=True,
         label='Телефон',
         error_messages=my_default_errors,
-        max_length=11,
+        max_length=13,
         min_length=11,
     )
 
